@@ -32,7 +32,7 @@ module hazard_unit(
   // Forwarding para SrcA (Rs1E)
   // Prioridad: EX/MEM > MEM/WB > Normal
   assign ForwardAE = 
-    // Forwarding desde EX/MEM (más reciente, mayor prioridad)
+    // Forwarding desde EX/MEM (mï¿½s reciente, mayor prioridad)
     ((Rs1E == RdM) && RegWriteM && (Rs1E != 5'b0)) ? 2'b10 :
     // Forwarding desde MEM/WB
     ((Rs1E == RdW) && RegWriteW && (Rs1E != 5'b0)) ? 2'b01 :
@@ -42,7 +42,7 @@ module hazard_unit(
   // Forwarding para SrcB (Rs2E)
   // Prioridad: EX/MEM > MEM/WB > Normal
   assign ForwardBE = 
-    // Forwarding desde EX/MEM (más reciente, mayor prioridad)
+    // Forwarding desde EX/MEM (mï¿½s reciente, mayor prioridad)
     ((Rs2E == RdM) && RegWriteM && (Rs2E != 5'b0)) ? 2'b10 :
     // Forwarding desde MEM/WB
     ((Rs2E == RdW) && RegWriteW && (Rs2E != 5'b0)) ? 2'b01 :
@@ -50,29 +50,29 @@ module hazard_unit(
     2'b00;
 
   // ===== LOAD-USE HAZARD DETECTION =====
-  // Detectar si la instrucción en EX es un lw (load word)
-  // ResultSrcE[0] = 1 indica que es una instrucción lw
+  // Detectar si la instrucciï¿½n en EX es un lw (load word)
+  // ResultSrcE[0] = 1 indica que es una instrucciï¿½n lw
   wire lwStall;
   
-  assign lwStall = ResultSrcE[0] &&  // La instrucción en EX es lw
+  assign lwStall = ResultSrcE[0] &&  // La instrucciï¿½n en EX es lw
                    ((Rs1D == RdE) || (Rs2D == RdE)) &&  // Dependencia RAW
                    (RdE != 5'b0);  // No hacer stall para x0
   
   // ===== CONTROL HAZARD HANDLING =====
   // Cuando se toma un salto (beq, bne, jal, jalr), las instrucciones
-  // que ya están en IF y ID son incorrectas y deben descartarse
+  // que ya estï¿½n en IF y ID son incorrectas y deben descartarse
   
-  // Reglas de propagación:
+  // Reglas de propagaciï¿½n:
   // 1. Load-use hazard:
   //    - StallF = 1: No avanzar PC
-  //    - StallD = 1: Mantener instrucción en ID
+  //    - StallD = 1: Mantener instrucciï¿½n en ID
   //    - FlushE = 1: Insertar NOP en EX
   //
   // 2. Control hazard (salto tomado):
-  //    - FlushD = 1: Descartar instrucción en ID
-  //    - FlushE = 1: Descartar instrucción en EX
+  //    - FlushD = 1: Descartar instrucciï¿½n en ID
+  //    - FlushE = 1: Descartar instrucciï¿½n en EX
   //    - StallF = 0: PC avanza al target del salto
-  //    - StallD = 0: ID acepta nueva instrucción
+  //    - StallD = 0: ID acepta nueva instrucciï¿½n
   
   assign StallF = lwStall;           // Solo stall en load-use
   assign StallD = lwStall;           // Solo stall en load-use

@@ -1,7 +1,7 @@
 // Pipelined Datapath (sin floating point)
 module datapath(
   input  clk, reset,
-  // Señales de control (vienen del controller externo)
+  // Se?ales de control (vienen del controller externo)
   input  [1:0]  ResultSrcD,
   input  ALUSrcD,
   input  RegWriteD,
@@ -14,7 +14,7 @@ module datapath(
   output MemWriteM,
   output ZeroM,
 
-  // Señales de Data
+  // Se?ales de Data
   input  [31:0] InstrF,
   input  [31:0] ReadDataM,
   
@@ -35,7 +35,7 @@ module datapath(
   wire [2:0] ALUControlE;
   wire ZeroE;
 
-  // Señales internas de cada etapa del pipeline
+  // Se?ales internas de cada etapa del pipeline
   // Fetch
   wire [31:0] PCPlus4F, PCNextF;
 
@@ -46,14 +46,14 @@ module datapath(
   // Execute
   wire [31:0] RD1E, RD2E, PCE, ImmExtE, PCPlus4E;
   wire [31:0] SrcAE, SrcBE, ALUResultE, WriteDataE;
-  wire [31:0] PCTargetE;  // Se calculará en EX stage
+  wire [31:0] PCTargetE;  // Se calcular? en EX stage
   wire [4:0] Rs1E, Rs2E, RdE;
-  wire [31:0] InstrE;  // Instrucción en EX stage (para debugging)
+  wire [31:0] InstrE;  // Instrucci?n en EX stage (para debugging)
 
   // Memory
   wire [31:0] PCPlus4M, PCTargetM;
   wire [4:0] RdM;
-  wire [31:0] InstruM;  // Instrucción en MEM stage (para debugging)
+  wire [31:0] InstruM;  // Instrucci?n en MEM stage (para debugging)
 
   // Writeback
   wire [31:0] ALUResultW, ReadDataW, PCPlus4W;
@@ -68,7 +68,7 @@ module datapath(
   wire StallF, StallD, FlushD, FlushE;
   
   // Control hazard signals
-  wire PCSrcE;  // Decisión de salto en EX (se calculará después de ALU)
+  wire PCSrcE;  // Decisi?n de salto en EX (se calcular? despu?s de ALU)
 
   // ===== FETCH =====
   // PC register con enable para stalling
@@ -87,12 +87,12 @@ module datapath(
     .y(PCPlus4F)
   );
 
-  // Mux del PC - PCSrcE se calculará después de ALU
-  // Al inicio, PCSrcE será 0 (BranchE y JumpE están en 0 después del reset)
+  // Mux del PC - PCSrcE se calcular? despu?s de ALU
+  // Al inicio, PCSrcE ser? 0 (BranchE y JumpE est?n en 0 despu?s del reset)
   mux2 #(WIDTH) pcmux(
     .d0(PCPlus4F),
     .d1(PCTargetE),     // Salto desde EX, no desde MEM
-    .s(PCSrcE),         // Decisión en EX (se calculará después de ALU)
+    .s(PCSrcE),         // Decisi?n en EX (se calcular? despu?s de ALU)
     .y(PCNextF)
   );
 
@@ -128,7 +128,7 @@ module datapath(
     .immext(ImmExtD)
   );
 
-  // ID/EX con soporte de flush (sin señales FP)
+  // ID/EX con soporte de flush (sin se?ales FP)
   ID_EX idex(
     .clk(clk),
     .reset(reset),
@@ -164,14 +164,14 @@ module datapath(
     .ALUSrcE(ALUSrcE),
     .ResultSrcE(ResultSrcE),
     .ALUControlE(ALUControlE),
-    .InstrE(InstrE)  // Instrucción en EX stage
+    .InstrE(InstrE)  // Instrucci?n en EX stage
   );
 
   // ===== EXECUTE =====
-  // Hazard Unit - Forwarding y Stalling Logic (sin PCSrcE todavía)
+  // Hazard Unit - Forwarding y Stalling Logic (sin PCSrcE todav?a)
   // Nota: Forwarding y stalling no dependen de PCSrcE
-  wire PCSrcE_temp = 1'b0;  // Temporal, se actualizará después de ALU
-  wire FlushD_temp, FlushE_temp;  // Temporales, se actualizarán después
+  wire PCSrcE_temp = 1'b0;  // Temporal, se actualizar? despu?s de ALU
+  wire FlushD_temp, FlushE_temp;  // Temporales, se actualizar?n despu?s
   wire lwStall;  // Load-use hazard detectado
   hazard_unit hu(
     // Entradas para forwarding
@@ -193,8 +193,8 @@ module datapath(
     .ForwardBE(ForwardBE),
     .StallF(StallF),
     .StallD(StallD),
-    .FlushD(FlushD_temp),  // Temporal, se actualizará después
-    .FlushE(FlushE_temp),   // Temporal, se actualizará después
+    .FlushD(FlushD_temp),  // Temporal, se actualizar? despu?s
+    .FlushE(FlushE_temp),   // Temporal, se actualizar? despu?s
     .lwStall(lwStall)       // Exportar lwStall
   );
 
@@ -245,19 +245,19 @@ module datapath(
     .y(PCTargetE)
   );
 
-  // Cálculo de PCSrc en EX (después de ALU, cuando ZeroE está disponible)
+  // C?lculo de PCSrc en EX (despu?s de ALU, cuando ZeroE est? disponible)
   // PCSrcE = 1 cuando:
   //   - Branch tomado: BranchE && ZeroE
   //   - Jump incondicional: JumpE
-  // Nota: Al inicio, BranchE y JumpE son 0 (desde ID_EX reset), así que PCSrcE = 0
+  // Nota: Al inicio, BranchE y JumpE son 0 (desde ID_EX reset), as? que PCSrcE = 0
   assign PCSrcE = (BranchE && ZeroE) || JumpE;
 
-  // Actualizar FlushD y FlushE con el PCSrcE real (después de ALU)
+  // Actualizar FlushD y FlushE con el PCSrcE real (despu?s de ALU)
   assign FlushD = PCSrcE;  // Flush ID cuando hay salto tomado
   assign FlushE = lwStall | PCSrcE;  // Flush EX en load-use o salto tomado
 
 
-  // EX/MEM (sin señales FP)
+  // EX/MEM (sin se?ales FP)
   EX_MEM exmem(
     .clk(clk),
     .reset(reset),
@@ -268,7 +268,7 @@ module datapath(
     .RegWriteE(RegWriteE),
     .MemWriteE(MemWriteE),
     .ResultSrcE(ResultSrcE),
-    .InstruE(InstrE),  // Pasar instrucción desde EX
+    .InstruE(InstrE),  // Pasar instrucci?n desde EX
     .ALUResultM(ALUResultM),
     .WriteDataM(WriteDataM),
     .PCPlus4M(PCPlus4M),
@@ -276,14 +276,14 @@ module datapath(
     .RegWriteM(RegWriteM),
     .MemWriteM(MemWriteM),
     .ResultSrcM(ResultSrcM),
-    .InstruM(InstruM)  // Instrucción en MEM stage
+    .InstruM(InstruM)  // Instrucci?n en MEM stage
   );
 
   // ===== MEMORY =====
-  // Acceso a memoria se realiza en el módulo superior
+  // Acceso a memoria se realiza en el m?dulo superior
   // Nota: PCSrc ahora se calcula en EX, no en MEM
 
-  // MEM/WB (sin señales FP)
+  // MEM/WB (sin se?ales FP)
   MEM_WB memwb(
     .clk(clk),
     .reset(reset),
@@ -293,7 +293,7 @@ module datapath(
     .RdM(RdM),
     .RegWriteM(RegWriteM),
     .ResultSrcM(ResultSrcM),
-    .InstruM(InstruM),  // Pasar instrucción desde MEM
+    .InstruM(InstruM),  // Pasar instrucci?n desde MEM
     .ALUResultW(ALUResultW),
     .ReadDataW(ReadDataW),
     .PCPlus4W(PCPlus4W),
