@@ -1,0 +1,121 @@
+{
+    // Configuración de TODO Highlight
+    "todohighlight.isEnable": true,
+    "todohighlight.isCaseSensitive": true,
+    
+    // Palabras clave personalizadas con estilos
+    "todohighlight.keywords": [
+        "TODO:",
+        "FIXME:",
+        "NOTE:",
+        "HACK:",
+        "XXX:",
+        "BUG:",
+        {
+            "text": "REVIEW:",
+            "color": "#ff9800",
+            "backgroundColor": "rgba(255, 152, 0, 0.2)",
+            "overviewRulerColor": "#ff9800",
+            "isWholeLine": false
+        },
+        {
+            "text": "OPTIMIZE:",
+            "color": "#2196F3",
+            "backgroundColor": "rgba(33, 150, 243, 0.2)",
+            "overviewRulerColor": "#2196F3",
+            "isWholeLine": false
+        }
+    ],
+    
+    // Estilo por defecto para palabras clave personalizadas
+    "todohighlight.defaultStyle": {
+        "color": "#ff6b6b",
+        "backgroundColor": "rgba(255, 107, 107, 0.15)",
+        "overviewRulerColor": "#ff6b6b",
+        "cursor": "pointer",
+        "isWholeLine": false,
+        "border": "1px solid rgba(255, 107, 107, 0.3)",
+        "borderRadius": "2px"
+    },
+    
+    // Archivos a incluir (agregué .v para Verilog y .s para assembly)
+    "todohighlight.include": [
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.html",
+        "**/*.php",
+        "**/*.css",
+        "**/*.scss",
+        "**/*.v",
+        "**/*.sv",
+        "**/*.s",
+        "**/*.py",
+        "**/*.c",
+        "**/*.cpp",
+        "**/*.h"
+    ],
+    
+    // Archivos y carpetas a excluir
+    "todohighlight.exclude": [
+        "**/node_modules/**",
+        "**/bower_components/**",
+        "**/dist/**",
+        "**/build/**",
+        "**/.vscode/**",
+        "**/.github/**",
+        "**/_output/**",
+        "**/*.min.*",
+        "**/*.map",
+        "**/.next/**"
+    ],
+    
+    "todohighlight.maxFilesForSearch": 5120,
+    "todohighlight.toggleURI": false,
+    
+    // Configuración para extensión "Highlight" (resaltar texto seleccionado)
+    "highlight.regexes": {
+        // Ejemplo: resaltar palabras clave comunes en Verilog
+        "(\\b(module|endmodule|always|assign|wire|reg)\\b)": {
+            "filterFileRegex": ".*\\.(v|sv)$",
+            "decorations": [
+                {
+                    "backgroundColor": "#ffd70033",
+                    "border": "1px solid #ffd700",
+                    "borderRadius": "2px"
+                }
+            ]
+        }
+    },
+    
+    // Configuración para Better Comments (opcional)
+    "better-comments.highlightPlainText": false,
+    "better-comments.multilineComments": true,
+    "better-comments.tags": [
+        {
+            "tag": "!",
+            "color": "#FF2D00",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "?",
+            "color": "#3498DB",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "todo",
+            "color": "#FF8C00",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "*",
+            "color": "#98C379",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        }
+    ]
+}

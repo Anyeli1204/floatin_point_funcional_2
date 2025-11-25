@@ -24,8 +24,7 @@ module hazard_unit(
   output StallF,   // Detener etapa Fetch
   output StallD,   // Detener etapa Decode
   output FlushD,   // Limpiar etapa Decode (control hazards)
-  output FlushE,   // Limpiar etapa Execute (data hazards y control hazards)
-  output lwStall   // Hazard load-use detectado (para uso externo)
+  output FlushE   // Limpiar etapa Execute (data hazards y control hazards)
 );
 
   // ===== FORWARDING LOGIC =====

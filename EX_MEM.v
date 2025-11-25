@@ -10,7 +10,6 @@ module EX_MEM(
     input [31:0] WriteDataE,
     input [31:0] PCPlus4E,
     input [4:0] RdE,
-    input [31:0] InstruE,
     
     output reg RegWriteM,
     output reg MemWriteM,
@@ -19,8 +18,7 @@ module EX_MEM(
     output reg [31:0] ALUResultM,
     output reg [31:0] WriteDataM,
     output reg [31:0] PCPlus4M,
-    output reg [4:0] RdM,
-    output reg [31:0] InstruM
+    output reg [4:0] RdM
 );
 
 always @(posedge clk or posedge reset) begin
@@ -40,7 +38,6 @@ always @(posedge clk or posedge reset) begin
         WriteDataM  <= WriteDataE;
         PCPlus4M    <= PCPlus4E;
         RdM         <= RdE;
-        InstruM     <= InstruE;
     end
 end
 

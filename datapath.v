@@ -1,59 +1,60 @@
-// Pipelined Datapath (sin floating point)
+  // TODO: Verificar que todas las señales de control estén correctamente conectadas
+  // FIXME: Revisar la lógica de forwarding para casos edge
+  // NOTE: Este módulo implementa un pipeline de 5 etapas
+
+
 module datapath(
   input  clk, reset,
-  // Se?ales de control (vienen del controller externo)
+  input  RegWriteD,  
   input  [1:0]  ResultSrcD,
-  input  ALUSrcD,
-  input  RegWriteD,
   input  MemWriteD,
-  input  JumpD,
+  input  JumpD,  
   input  BranchD,
-  input  [2:0]  ImmSrcD,    // 3 bits para soportar lui
   input  [2:0]  ALUControlD,
-
-  output MemWriteM,
-  output ZeroM,
-
-  // Se?ales de Data
+  input  ALUSrcD,
+  input  [2:0]  ImmSrcD, 
   input  [31:0] InstrF,
-  input  [31:0] ReadDataM,
-  
+  input  [31:0] ReadDataM, // Proviene de fuera del módulo datapath, es decir, si dmem lee datos de memoria, produce ReadData
+  //ReadData, se conecta a ReadDataM del datapath
+  //ReadDataM, entra al registro MemWB como ReadDataM
+
+  output ZeroE,
+  output MemWriteM,
   output [31:0] PCF,
   output [31:0] InstrD,
   output [31:0] ALUResultM, WriteDataM
 );
 
+
   localparam WIDTH = 32;
 
-  // Señales de control para cada etapa del pipeline
-  wire [1:0] ResultSrcE, ResultSrcM, ResultSrcW;
-  wire ALUSrcE;
   wire RegWriteE, RegWriteM, RegWriteW;
+  wire [1:0] ResultSrcE, ResultSrcM, ResultSrcW;
   wire MemWriteE;
-  wire JumpE, JumpM;
-  wire BranchE, BranchM;
+  wire JumpE;
+  wire BranchE;
   wire [2:0] ALUControlE;
+  wire ALUSrcE;
   wire ZeroE;
 
   // Señales internas de cada etapa del pipeline
   // Fetch
-  wire [31:0] PCPlus4F, PCNextF;
+  wire [31:0] PCPlus4F, PCNextF; //PCNextF es siguiente instruccion
 
   // Decode
-  wire [31:0] PCD, PCPlus4D;
+  wire [31:0] PCD, PCPlus4D; 
   wire [31:0] RD1D, RD2D, ImmExtD;
 
   // Execute
   wire [31:0] RD1E, RD2E, PCE, ImmExtE, PCPlus4E;
-  wire [31:0] SrcAE, SrcBE, ALUResultE, WriteDataE;
-  wire [31:0] PCTargetE;  // Se calcular? en EX stage
+  wire [31:0] SrcBE, ALUResultE, WriteDataE;
+  wire [31:0] PCTargetE;  
   wire [4:0] Rs1E, Rs2E, RdE;
-  wire [31:0] InstrE;  // Instrucci?n en EX stage (para debugging)
 
   // Memory
-  wire [31:0] PCPlus4M, PCTargetM;
+  wire [31:0] PCPlus4M;
+  wire [31:0] ALUResultM, WriteDataM;
   wire [4:0] RdM;
-  wire [31:0] InstruM;  // Instrucci?n en MEM stage (para debugging)
 
   // Writeback
   wire [31:0] ALUResultW, ReadDataW, PCPlus4W;
@@ -62,7 +63,7 @@ module datapath(
 
   // Señales de forwarding (adelantamiento de datos)
   wire [1:0] ForwardAE, ForwardBE;
-  wire [31:0] SrcAE_forwarded, SrcBE_forwarded;
+  wire [31:0] SrcAE_forwarded;
   
   // Señales de stall y flush
   wire StallF, StallD, FlushD, FlushE;
@@ -75,7 +76,7 @@ module datapath(
   flopr #(WIDTH) pcreg(
     .clk(clk),
     .reset(reset),
-    .StallF(StallF),      // Detener cuando StallF = 1
+    .StallF(StallF),      // Detener cuando StallF = 1, aqui esta diferente al otro codigo creom revisar como esta maneja la logica del stall
     .d(PCNextF),
     .q(PCF)
   );
@@ -83,7 +84,6 @@ module datapath(
   adder pcadd4(
     .a(PCF),
     .b(32'd4),
-    .StallF(1'b0),
     .y(PCPlus4F)
   );
 
@@ -149,7 +149,6 @@ module datapath(
     .ALUSrcD(ALUSrcD),
     .ResultSrcD(ResultSrcD),
     .ALUControlD(ALUControlD),
-    .InstrD(InstrD),
     .RD1E(RD1E),
     .RD2E(RD2E),
     .PCE(PCE),
@@ -164,16 +163,10 @@ module datapath(
     .BranchE(BranchE),
     .ALUSrcE(ALUSrcE),
     .ResultSrcE(ResultSrcE),
-    .ALUControlE(ALUControlE),
-    .InstrE(InstrE)  // Instrucci?n en EX stage
+    .ALUControlE(ALUControlE)
   );
 
-  // ===== EXECUTE =====
-  // Hazard Unit - Forwarding y Stalling Logic (sin PCSrcE todav?a)
-  // Nota: Forwarding y stalling no dependen de PCSrcE
-  wire PCSrcE_temp = 1'b0;  // Temporal, se actualizar? despu?s de ALU
-  wire FlushD_temp, FlushE_temp;  // Temporales, se actualizar?n despu?s
-  wire lwStall;  // Load-use hazard detectado
+// ===== EXECUTE =====
   hazard_unit hu(
     // Entradas para forwarding
     .Rs1E(Rs1E),
@@ -188,15 +181,14 @@ module datapath(
     .RdE(RdE),
     .ResultSrcE(ResultSrcE),
     // Entradas para flushing (control hazards) - temporal
-    .PCSrcE(PCSrcE_temp),
+    .PCSrcE(PCSrcE),
     // Salidas
     .ForwardAE(ForwardAE),
     .ForwardBE(ForwardBE),
     .StallF(StallF),
     .StallD(StallD),
-    .FlushD(FlushD_temp),  // Temporal, se actualizar? despu?s
-    .FlushE(FlushE_temp),   // Temporal, se actualizar? despu?s
-    .lwStall(lwStall)       // Exportar lwStall
+    .FlushD(FlushD),  // Temporal, se actualizar? despu?s
+    .FlushE(FlushE),   // Temporal, se actualizar? despu?s
   );
 
   // Mux para forwarding en SrcA
@@ -210,21 +202,16 @@ module datapath(
   );
 
   // Mux para forwarding en SrcB (antes del mux de immediate)
-  // ForwardBE: 00 = RD2E, 01 = ResultW, 10 = ALUResultM
   mux3 #(WIDTH) forwardBmux(
     .d0(RD2E),           // Sin forwarding
     .d1(ResultW),        // Forward desde WB
     .d2(ALUResultM),     // Forward desde MEM
     .s(ForwardBE),
-    .y(SrcBE_forwarded)
+    .y(WriteDataE)
   );
 
-  // Asignar valores forwardeados a la ALU
-  assign SrcAE = SrcAE_forwarded;
-  assign WriteDataE = SrcBE_forwarded;  // Para stores, usar valor forwardeado
-
   mux2 #(WIDTH) srcbmux(
-    .d0(SrcBE_forwarded),  // Valor del registro (o forwardeado)
+    .d0(WriteDataE),     // Valor del registro (o forwardeado)
     .d1(ImmExtE),          // Immediate
     .s(ALUSrcE),
     .y(SrcBE)
@@ -232,7 +219,7 @@ module datapath(
 
   // Unidad Aritmético-Lógica
   alu alu(
-    .a(SrcAE),
+    .a(SrcAE_forwarded),
     .b(SrcBE),
     .alucontrol(ALUControlE),
     .result(ALUResultE),
@@ -242,7 +229,6 @@ module datapath(
   adder pcaddbranch(
     .a(PCE),
     .b(ImmExtE),
-    .StallF(1'b0),  // No se usa stall en branch adder
     .y(PCTargetE)
   );
 
@@ -253,38 +239,33 @@ module datapath(
   // Nota: Al inicio, BranchE y JumpE son 0 (desde ID_EX reset), así que PCSrcE = 0
   assign PCSrcE = (BranchE && ZeroE) || JumpE;
 
-  // Actualizar FlushD y FlushE con el PCSrcE real (después de ALU)
-  assign FlushD = PCSrcE;  // Limpiar ID cuando hay salto tomado
-  assign FlushE = lwStall | PCSrcE;  // Limpiar EX en load-use o salto tomado
-
-
-  // EX/MEM (sin se?ales FP)
+  // EX/MEM 
   EX_MEM exmem(
+    // Inputs (señales de control y datos desde EX stage)
     .clk(clk),
     .reset(reset),
+    .RegWriteE(RegWriteE),
+    .MemWriteE(MemWriteE),
+    .ResultSrcE(ResultSrcE),
     .ALUResultE(ALUResultE),
     .WriteDataE(WriteDataE),
     .PCPlus4E(PCPlus4E),
     .RdE(RdE),
-    .RegWriteE(RegWriteE),
-    .MemWriteE(MemWriteE),
-    .ResultSrcE(ResultSrcE),
-    .InstruE(InstrE),  // Pasar instrucci?n desde EX
-    .ALUResultM(ALUResultM),
-    .WriteDataM(WriteDataM),
-    .PCPlus4M(PCPlus4M),
-    .RdM(RdM),
+    // Outputs (señales de control y datos hacia MEM stage)
     .RegWriteM(RegWriteM),
     .MemWriteM(MemWriteM),
     .ResultSrcM(ResultSrcM),
-    .InstruM(InstruM)  // Instrucci?n en MEM stage
+    .ALUResultM(ALUResultM),
+    .WriteDataM(WriteDataM),
+    .PCPlus4M(PCPlus4M),
+    .RdM(RdM)
   );
 
   // ===== MEMORY =====
   // Acceso a memoria se realiza en el m?dulo superior
   // Nota: PCSrc ahora se calcula en EX, no en MEM
 
-  // MEM/WB (sin se?ales FP)
+  // MEM/WB 
   MEM_WB memwb(
     .clk(clk),
     .reset(reset),
@@ -294,14 +275,12 @@ module datapath(
     .RdM(RdM),
     .RegWriteM(RegWriteM),
     .ResultSrcM(ResultSrcM),
-    .InstruM(InstruM),  // Pasar instrucci?n desde MEM
     .ALUResultW(ALUResultW),
     .ReadDataW(ReadDataW),
     .PCPlus4W(PCPlus4W),
     .RdW(RdW),
     .RegWriteW(RegWriteW),
     .ResultSrcW(ResultSrcW),
-    .InstruW()  // Output no usado
   );
 
   // ===== ETAPA WRITEBACK =====
@@ -314,7 +293,8 @@ module datapath(
     .y(ResultW)
   );
 
-  // ZeroM output (ZeroE propagado a MEM stage)
-  assign ZeroM = ZeroE;
+  // ZeroE es combinacional: se activa directamente cuando ALUResultE == 0
+  // No necesita registrarse porque Zero es una señal combinacional de la ALU
+  // Se usa en EX para la decisión de branch: PCSrcE = (BranchE && ZeroE) || JumpE
 
 endmodule

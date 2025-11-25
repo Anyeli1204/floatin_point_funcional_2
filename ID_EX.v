@@ -7,14 +7,12 @@ module ID_EX(input clk, reset,
                 input RegWriteD, MemWriteD, JumpD, BranchD, ALUSrcD,
                 input [1:0] ResultSrcD,
                 input [2:0] ALUControlD,
-                input [31:0] InstrD,
                 output reg [31:0] RD1E, RD2E, PCE,
                 output reg [4:0] Rs1E, Rs2E, RdE,
                 output reg [31:0] ImmExtE, PCPlus4E,
                 output reg RegWriteE, MemWriteE, JumpE, BranchE, ALUSrcE,
                 output reg [1:0] ResultSrcE,
-                output reg [2:0] ALUControlE,
-                output reg [31:0] InstrE);
+                output reg [2:0] ALUControlE);
 
   always @(posedge clk) begin
     if (reset || FlushE) begin  // Reset o Flush = insertar NOP
@@ -33,7 +31,6 @@ module ID_EX(input clk, reset,
       ALUSrcE <= 0;
       ResultSrcE <= 0;
       ALUControlE <= 0;
-      InstrE <= 0;
     end else begin
       RD1E <= RD1D;
       RD2E <= RD2D;
@@ -50,7 +47,6 @@ module ID_EX(input clk, reset,
       ALUSrcE <= ALUSrcD;
       ResultSrcE <= ResultSrcD;
       ALUControlE <= ALUControlD;
-      InstrE <= InstrD;
     end
   end
 endmodule

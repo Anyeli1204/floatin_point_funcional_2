@@ -1,5 +1,4 @@
-// RISC-V Pipelined Processor (sin floating point)
-// Estilo Bruno: controller fuera del datapath
+// RISC-V Pipelined Processor 
 module riscvpipeline(input  clk, reset,
                       output [31:0] PCF,
                       input  [31:0] InstrF,
@@ -16,16 +15,16 @@ module riscvpipeline(input  clk, reset,
   wire BranchD;
   wire [2:0] ImmSrcD;  // 3 bits para soportar lui
   wire [2:0] ALUControlD;
-  wire ZeroM;
+  wire ZeroE;
   wire [31:0] InstrD;
   wire PCSrcM_unused;  // Not used in pipeline version (PCSrc se calcula en EX)
 
-  // Controller instantiation (sin floating point)
+  // Controller instantiation 
   controller c(
     .op(InstrD[6:0]),
     .funct3(InstrD[14:12]),
     .funct7b5(InstrD[30]),
-    .Zero(ZeroM),
+    .Zero(ZeroE),
     .ResultSrc(ResultSrcD),
     .MemWrite(MemWriteD),
     .PCSrc(PCSrcM_unused),  // Calculated in datapath instead
@@ -49,7 +48,7 @@ module riscvpipeline(input  clk, reset,
     .BranchD(BranchD),
     .ImmSrcD(ImmSrcD),
     .ALUControlD(ALUControlD),
-    .ZeroM(ZeroM),
+    .ZeroE(ZeroE),
     .PCF(PCF),
     .InstrF(InstrF),
     .InstrD(InstrD),

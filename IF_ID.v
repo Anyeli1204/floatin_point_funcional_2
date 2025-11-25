@@ -1,4 +1,3 @@
-// IF/ID Pipeline Register con Stall y Flush (sin floating point)
 module IF_ID(input clk, reset,
                 input stallD,  // Señal de stall
                 input flushD,  // Señal de flush (para control hazards)

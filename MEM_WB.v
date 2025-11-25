@@ -4,12 +4,10 @@ module MEM_WB(input clk, reset,
                  input [4:0] RdM,
                  input RegWriteM,
                  input [1:0] ResultSrcM,
-                 input [31:0] InstruM,
                  output reg [31:0] ALUResultW, ReadDataW, PCPlus4W,
                  output reg [4:0] RdW,
                  output reg RegWriteW,
-                 output reg [1:0] ResultSrcW,
-                 output reg [31:0] InstruW);
+                 output reg [1:0] ResultSrcW);
 
   always @(posedge clk or posedge reset) begin
     if (reset) begin
@@ -19,7 +17,6 @@ module MEM_WB(input clk, reset,
       RdW <= 0;
       RegWriteW <= 0;
       ResultSrcW <= 0;
-      InstruW <= 0;
     end else begin
       ALUResultW <= ALUResultM;
       ReadDataW <= ReadDataM;
@@ -27,7 +24,6 @@ module MEM_WB(input clk, reset,
       RdW <= RdM;
       RegWriteW <= RegWriteM;
       ResultSrcW <= ResultSrcM;
-      InstruW <= InstruM;
     end
   end
 endmodule
