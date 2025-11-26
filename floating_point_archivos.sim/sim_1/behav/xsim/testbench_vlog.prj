@@ -1,0 +1,38 @@
+# compile verilog/system verilog design source files
+verilog xil_defaultlib  \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/DivHP.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/EX_MEM.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/ID_EX.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/IF_ID.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/MEM_WB.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/ProductHP.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/RoundNearestEven.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/Suma16Bits.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/adder.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/alu.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/alu_fp_full.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/aludec.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/controller_fp.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/datapath.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/dmem.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/extend.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/flopr.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/fp16_special_case_handler.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/fp_flags_detectors.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/fpdec.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/fregfile.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/hazard_unit.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/imem.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/maindec.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/mux2.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/mux3.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/regfile.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/riscvsingle.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/top.v" \
+"../../../../floating_point_archivos.srcs/sources_1/imports/pipeline/testbench.v" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort
