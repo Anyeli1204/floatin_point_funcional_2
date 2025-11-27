@@ -1,0 +1,46 @@
+# Test específico para verificar latencias de operaciones FP
+# Este programa prueba que las operaciones FP con latencia > 1 hacen stall correctamente
+
+# === SECUENCIA DE PRUEBA DE LATENCIAS ===
+# Objetivo: Verificar que fmul (4 ciclos) y fdiv (12 ciclos) hacen stall
+
+# 1. flw f1, 0(x0)  - Cargar 1.0 desde RAM[0] (0x3F800000)
+00001087
+
+# 2. flw f2, 4(x0)  - Cargar 2.0 desde RAM[1] (0x40000000)
+00002097
+
+# 3. fadd.s f3, f1, f2  - f3 = 1.0 + 2.0 = 3.0 (latencia: 1 ciclo)
+002081D3
+
+# 4. fmul.s f4, f1, f2  - f4 = 1.0 * 2.0 = 2.0 (latencia: 4 ciclos)
+08208053
+
+# 5. fdiv.s f5, f1, f2  - f5 = 1.0 / 2.0 = 0.5 (latencia: 12 ciclos)
+0C108053
+
+# 6. fadd.s f6, f3, f4  - f6 = 3.0 + 2.0 = 5.0 (latencia: 1 ciclo)
+# Esta instrucción debería esperar a que f4 esté lista
+004181D3
+
+# 7. fsw f6, 8(x0)  - Guardar f6 (5.0) en RAM[2]
+00602027
+
+# 8-15. NOPs para permitir que todas las operaciones terminen
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+00000013
+
+# === VERIFICACIÓN ===
+# En el waveform, deberías ver:
+# - fadd.s (ciclo ~3): 1 ciclo de latencia (sin stall adicional)
+# - fmul.s (ciclo ~4): 4 ciclos de latencia (3 ciclos de stall adicional)
+# - fdiv.s (ciclo ~8): 12 ciclos de latencia (11 ciclos de stall adicional)
+# - fadd.s f6 (ciclo ~20): Debe esperar a que f4 esté lista antes de ejecutar
+
+

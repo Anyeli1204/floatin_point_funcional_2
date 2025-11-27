@@ -1,0 +1,51 @@
+# Instrucciones de Prueba para Pipeline FP
+# Formato: Hexadecimal (una instrucción por línea)
+
+# === SECUENCIA DE PRUEBA ===
+# 1. Cargar valores FP desde memoria
+# 2. Realizar operaciones aritméticas FP
+# 3. Guardar resultado en memoria
+# 4. Cargar de vuelta para verificar
+
+# === INSTRUCCIONES ===
+
+# 1. flw f1, 0(x0)  - Cargar 1.0 desde RAM[0] (0x3F800000)
+00001087
+
+# 2. flw f2, 4(x0)  - Cargar 2.0 desde RAM[1] (0x40000000)
+00002097
+
+# 3. fadd.s f3, f1, f2  - f3 = f1 + f2 = 1.0 + 2.0 = 3.0
+002081D3
+
+# 4. fsub.s f4, f3, f1  - f4 = f3 - f1 = 3.0 - 1.0 = 2.0
+00118053
+
+# 5. fmul.s f5, f1, f2  - f5 = f1 * f2 = 1.0 * 2.0 = 2.0
+08208053
+
+# 6. fdiv.s f6, f1, f2  - f6 = f1 / f2 = 1.0 / 2.0 = 0.5
+0C108053
+
+# 7. fsw f3, 8(x0)  - Guardar f3 (3.0) en RAM[2] (dirección 8 bytes)
+00302027
+
+# 8. flw f7, 8(x0)  - Cargar de vuelta desde RAM[2] para verificar
+00007087
+
+# 9-11. NOPs (addi x0, x0, 0) - Para permitir que las instrucciones terminen
+00000013
+00000013
+00000013
+
+# === VALORES ESPERADOS ===
+# Después de ejecutar:
+# - f1 = 0x3F800000 (1.0)
+# - f2 = 0x40000000 (2.0)
+# - f3 = 0x40400000 (3.0)
+# - f4 = 0x40000000 (2.0)
+# - f5 = 0x40000000 (2.0)
+# - f6 = 0x3F000000 (0.5)
+# - f7 = 0x40400000 (3.0) después de flw
+# - RAM[2] = 0x40400000 (3.0) después de fsw
+

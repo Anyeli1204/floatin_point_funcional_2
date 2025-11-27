@@ -5,7 +5,7 @@ module testbench_fp_verification;
   wire [31:0]  WriteData;
   wire [31:0]  DataAdr;
   wire         MemWrite;
-  // Señales FP
+  // Seï¿½ales FP
   wire         FPMemWriteM;
   wire [31:0]  FWriteDataM;
   
@@ -20,16 +20,16 @@ module testbench_fp_verification;
     .FWriteDataM(FWriteDataM)
   );
   
-  // Guardar todas las señales en el archivo de waveform
+  // Guardar todas las seï¿½ales en el archivo de waveform
   initial begin
     $dumpfile("pipeline_dump_fp.vcd"); 
-    $dumpvars(0, testbench_fp_verification);  // Solo este módulo y sus sub-módulos
+    $dumpvars(0, testbench_fp_verification);  // Solo este mï¿½dulo y sus sub-mï¿½dulos
   end
   
   // Inicializar la prueba
   initial begin
     $display("==========================================");
-    $display("Testbench de Verificación FP");
+    $display("Testbench de Verificaciï¿½n FP");
     $display("==========================================");
     reset = 1; 
     # 22;
@@ -49,9 +49,9 @@ module testbench_fp_verification;
   // Contador de ciclos
   reg [31:0] cycle_count = 0;
   
-  // Valores esperados para verificación
+  // Valores esperados para verificaciï¿½n
   reg [31:0] expected_fsw_address = 32'h00000008;  // 8 bytes = RAM[2]
-  reg [31:0] expected_fsw_data = 32'h40400000;     // 3.0 en IEEE 754
+  reg [31:0] expected_fsw_data = 32'h40A00000;     // 5.0 en IEEE 754 (f6 = f3 + f4 = 3.0 + 2.0)
   reg fsw_detected = 0;
   reg fsw_verified = 0;
   
@@ -59,7 +59,7 @@ module testbench_fp_verification;
     if (!reset) begin
       cycle_count = cycle_count + 1;
       
-      // Detectar fsw f3, 8(x0) cuando está en MEM
+      // Detectar fsw f3, 8(x0) cuando estï¿½ en MEM
       if (FPMemWriteM && DataAdr == expected_fsw_address) begin
         fsw_detected = 1;
         $display("\n==========================================");
@@ -70,15 +70,15 @@ module testbench_fp_verification;
         
         // Verificar el dato
         if (FWriteDataM == expected_fsw_data) begin
-          $display("? VERIFICACION EXITOSA: Dato correcto (3.0)");
+          $display("âœ“ VERIFICACION EXITOSA: Dato correcto (5.0)");
           fsw_verified = 1;
         end else begin
-          $display("? ERROR: Dato incorrecto");
-          $display("   Esperado: 0x%08h (3.0)", expected_fsw_data);
+          $display("âœ— ERROR: Dato incorrecto");
+          $display("   Esperado: 0x%08h (5.0)", expected_fsw_data);
           $display("   Obtenido: 0x%08h", FWriteDataM);
         end
         
-        // Verificar la dirección
+        // Verificar la direcciï¿½n
         if (DataAdr == expected_fsw_address) begin
           $display("? VERIFICACION EXITOSA: Direccion correcta (8 bytes = RAM[2])");
         end else begin
@@ -89,7 +89,7 @@ module testbench_fp_verification;
         $display("==========================================\n");
       end
       
-      // Mostrar información cada 10 ciclos o cuando hay escritura a memoria
+      // Mostrar informaciï¿½n cada 10 ciclos o cuando hay escritura a memoria
       if (cycle_count % 10 == 0 || MemWrite || FPMemWriteM) begin
         if (FPMemWriteM) begin
           $display("Ciclo %0d: Escritura FP - Dir=0x%08h (%0d), Dato=0x%08h", 
@@ -102,16 +102,16 @@ module testbench_fp_verification;
         end
       end
       
-      // Resumen final después de suficientes ciclos
+      // Resumen final despuï¿½s de suficientes ciclos
       if (cycle_count == 50) begin
         $display("\n==========================================");
         $display("RESUMEN DE VERIFICACION");
         $display("==========================================");
         if (fsw_detected) begin
           if (fsw_verified) begin
-            $display("? fsw f3, 8(x0) EJECUTADO CORRECTAMENTE");
+            $display("âœ“ fsw f6, 8(x0) EJECUTADO CORRECTAMENTE");
             $display("   - Direccion: 0x%08h (RAM[2])", expected_fsw_address);
-            $display("   - Dato: 0x%08h (3.0)", expected_fsw_data);
+            $display("   - Dato: 0x%08h (5.0 = 3.0 + 2.0)", expected_fsw_data);
           end else begin
             $display("??  fsw detectado pero con datos incorrectos");
           end
@@ -122,7 +122,7 @@ module testbench_fp_verification;
         $display("==========================================\n");
       end
       
-      // Detener la simulación después de 100 ciclos
+      // Detener la simulaciï¿½n despuï¿½s de 100 ciclos
       if (cycle_count > 100) begin
         $display("\n==========================================");
         $display("Simulacion completada despues de %0d ciclos", cycle_count);

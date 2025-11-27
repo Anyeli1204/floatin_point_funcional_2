@@ -44,6 +44,9 @@ module datapath(
   // Se�ales de control flotantes
   wire FPRegWriteE, FPRegWriteM, FPRegWriteW;  // Escritura en register file FP
   wire FPMemWriteE, FPMemWriteM;               // Escritura en memoria FP
+  
+  // Escritura en banco entero solo si NO es instruccion FP
+  wire RegWriteIntW = RegWriteW & ~FPRegWriteW;
 
   // Se�ales internas de cada etapa del pipeline
   // Fetch
@@ -131,10 +134,11 @@ module datapath(
   );
 
   // ===== ETAPA DECODE =====
-  // Banco de registros
+  // Banco de registros enteros
+  // Solo escribir si es instrucción entera (no FP)
   regfile rf(
     .clk(clk),
-    .we3(RegWriteW),
+    .we3(RegWriteIntW),  // Escritura solo para instrucciones enteras
     .a1(InstrD[19:15]),
     .a2(InstrD[24:20]),
     .a3(RdW),

@@ -1,0 +1,52 @@
+// Formato: INST(Hex)  RS1_VAL(Hex)  RS2_VAL(Hex)  RS3_VAL(Hex)  EXP_RD(Hex)  FFLAGS(Hex)
+// RS1=OpA, RS2=OpB, RS3=OpC (para FMA). Los registros usados en la instruccion son f1=rd, f2=rs1, f3=rs2, f4=rs3
+// Nota: Para usar este testvector, primero se deben inicializar los registros f2, f3, f4 con los valores RS1_VAL, RS2_VAL, RS3_VAL
+// Luego se ejecuta la instrucción INST, y se verifica que f1 (rd) tenga el valor EXP_RD
+
+// --- ARITMÉTICA BÁSICA ---
+// FADD.S f1, f2, f3 (1.0 + 1.0 = 2.0)
+003100D3 3F800000 3F800000 00000000 40000000 00
+
+// FADD.S f1, f2, f3 (1.5 + 0.75 = 2.25)
+003100D3 3FC00000 3F400000 00000000 40100000 00
+
+// FSUB.S f1, f2, f3 (2.0 - 1.0 = 1.0)
+083100D3 40000000 3F800000 00000000 3F800000 00
+
+// FMUL.S f1, f2, f3 (2.0 * 3.0 = 6.0)
+103100D3 40000000 40400000 00000000 40C00000 00
+
+// FDIV.S f1, f2, f3 (1.0 / 2.0 = 0.5)
+183100D3 3F800000 40000000 00000000 3F000000 00
+
+// --- COMPARACIONES ---
+// FEQ.S f1, f2, f3 (1.0 == 1.0 -> 1)
+A03120D3 3F800000 3F800000 00000000 00000001 00
+
+// FLT.S f1, f2, f3 (1.0 < 2.0 -> 1)
+A03110D3 3F800000 40000000 00000000 00000001 00
+
+// FLE.S f1, f2, f3 (2.0 <= 1.0 -> 0)
+A03100D3 40000000 3F800000 00000000 00000000 00
+
+// --- INYECCIÓN DE SIGNO (Sign Injection) ---
+// FSGNJ.S (Copia signo de RS2 a RS1) -> Sign(2.0, -1.0) = -2.0
+203100D3 40000000 BF800000 00000000 C0000000 00
+
+// FSGNJN.S (Negativo del signo de RS2 a RS1) -> N_Sign(2.0, -1.0) = 2.0
+203110D3 40000000 BF800000 00000000 40000000 00
+
+// --- MIN / MAX ---
+// FMIN.S (min(1.0, 2.0) = 1.0)
+283100D3 3F800000 40000000 00000000 3F800000 00
+
+// FMAX.S (max(1.0, 2.0) = 2.0)
+283110D3 3F800000 40000000 00000000 40000000 00
+
+// --- CORNER CASES (Casos Borde) ---
+// Div by Zero: 1.0 / 0.0 = Infinity, Flag DZ (DivByZero)
+183100D3 3F800000 00000000 00000000 7F800000 08
+
+// NaN Propagation: 1.0 + NaN = NaN
+003100D3 3F800000 7FC00000 00000000 7FC00000 00
+

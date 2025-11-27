@@ -1,0 +1,22 @@
+// Formato simplificado: solo instrucciones que se ejecutan secuencialmente
+// Los valores se inicializan en memoria o se cargan con flw antes de usar
+// Este formato es compatible con el diseño actual del pipeline
+
+// Secuencia de prueba para operaciones FP básicas:
+// 1. Cargar valores iniciales en registros FP desde memoria
+// 2. Ejecutar operaciones FP
+// 3. Guardar resultados en memoria
+
+// Paso 1: Cargar 1.0 en f2 desde memoria[0]
+00001097
+// Paso 2: Cargar 1.0 en f3 desde memoria[0] (mismo valor para prueba)
+00001097
+// Paso 3: FADD.S f1, f2, f3 (1.0 + 1.0 = 2.0)
+003100D3
+// Paso 4: Guardar resultado en memoria[8]
+00302027
+// NOPs para completar el pipeline
+00000013
+00000013
+00000013
+
