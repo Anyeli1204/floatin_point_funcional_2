@@ -12,6 +12,7 @@ module ID_EX(input clk, reset,
                 input FPRegWriteD,              // Escritura en register file FP
                 input FPMemWriteD,              // Escritura en memoria FP
                 input [2:0] FALUControlD,        // Control FALU (3 bits)
+                input [3:0] FPLatencyD,         // Latencia FP (4 bits)
                 input [31:0] FRD1D, FRD2D, 
                      // Datos del register file FP
                 output reg [31:0] RD1E, RD2E, PCE,
@@ -25,11 +26,23 @@ module ID_EX(input clk, reset,
                 output reg FPRegWriteE,          // Escritura en register file FP
                 output reg FPMemWriteE,          // Escritura en memoria FP
                 output reg [2:0] FALUControlE,   // Control FALU en EX
+                output reg [3:0] FPLatencyE,     // Latencia FP en EX
                 output reg [31:0] FRD1E, FRD2E   // Datos FP en EX
 );
 
-  always @(posedge clk) begin
-    if (reset || FlushE) begin  // Reset o Flush = insertar NOP
+  // Inicializar registros
+  initial begin
+    FPLatencyE = 4'b0;
+    isFPE = 1'b0;
+    FPRegWriteE = 1'b0;
+    FPMemWriteE = 1'b0;
+    FALUControlE = 3'b0;
+    FRD1E = 32'b0;
+    FRD2E = 32'b0;
+  end
+
+  always @(posedge clk or posedge reset) begin
+    if (reset) begin  // Reset asíncrono
       RD1E <= 0;
       RD2E <= 0;
       PCE <= 0;
@@ -38,8 +51,8 @@ module ID_EX(input clk, reset,
       RdE <= 0;
       ImmExtE <= 0;
       PCPlus4E <= 0;
-      RegWriteE <= 0;  // IMPORTANTE: Deshabilitar escritura
-      MemWriteE <= 0;  // IMPORTANTE: Deshabilitar escritura a memoria
+      RegWriteE <= 0;
+      MemWriteE <= 0;
       JumpE <= 0;
       BranchE <= 0;
       ALUSrcE <= 0;
@@ -50,6 +63,38 @@ module ID_EX(input clk, reset,
       FPRegWriteE <= 0;
       FPMemWriteE <= 0;
       FALUControlE <= 0;
+      FPLatencyE <= 0;
+      FRD1E <= 0;
+      FRD2E <= 0;
+    end else if (FlushE) begin  // Flush = insertar NOP
+      RD1E <= 0;
+      RD2E <= 0;
+      PCE <= 0;
+      Rs1E <= 0;
+      Rs2E <= 0;
+      RdE <= 0;
+      ImmExtE <= 0;
+      PCPlus4E <= 0;
+      RegWriteE <= 0;
+      MemWriteE <= 0;
+      JumpE <= 0;
+      BranchE <= 0;
+      ALUSrcE <= 0;
+      ResultSrcE <= 0;
+      ALUControlE <= 0;
+      // Señales FP
+      isFPE <= 0;
+      FPRegWriteE <= 0;
+      FPMemWriteE <= 0;
+      FALUControlE <= 0;
+      // IMPORTANTE: Si FPLatencyD tiene un valor válido (>0), mantenerlo incluso durante flush
+      // Esto evita perder la latencia cuando FlushE se activa por load-use hazard
+      // No dependemos de isFPD porque puede no estar activo en el momento correcto
+      if (FPLatencyD > 4'b0) begin
+        FPLatencyE <= FPLatencyD;  // Capturar la latencia incluso durante flush
+      end else begin
+        FPLatencyE <= 0;
+      end
       FRD1E <= 0;
       FRD2E <= 0;
     end else begin
@@ -73,6 +118,7 @@ module ID_EX(input clk, reset,
       FPRegWriteE <= FPRegWriteD;
       FPMemWriteE <= FPMemWriteD;
       FALUControlE <= FALUControlD;
+      FPLatencyE <= FPLatencyD;
       FRD1E <= FRD1D;
       FRD2E <= FRD2D;
     end

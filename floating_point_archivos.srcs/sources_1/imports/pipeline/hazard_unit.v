@@ -1,5 +1,6 @@
 // Unidad de detección de hazards con forwarding, stalling y flushing
 module hazard_unit(
+  input clk, reset,  // Reloj y reset para contador de latencia
   // Entradas desde la etapa Decode (ID)
   input [4:0] Rs1D, Rs2D,
   
@@ -9,6 +10,12 @@ module hazard_unit(
   input PCSrcE,            // Para detectar saltos tomados
   input FPRegWriteE,      // Para detectar flw (FPRegWriteE = 1 cuando es flw)
   input RegWriteE,        // Para detectar lw (RegWriteE = 1 cuando es lw)
+  // Entradas para manejo de latencia FP
+  input isFPE,            // 1 si es instrucción FP en EX
+  input [3:0] FPLatencyE, // Latencia de la operación FP en EX
+  // También necesitamos isFPD y FPLatencyD para detectar cuando entra una nueva operación
+  input isFPD,            // 1 si es instrucción FP en ID (Decode)
+  input [3:0] FPLatencyD,  // Latencia de la operación FP en ID
   
   // Entradas desde la etapa Memory (MEM)
   input [4:0] RdM,
@@ -100,6 +107,67 @@ module hazard_unit(
   // Stall total: si hay dependencia con lw o flw
   assign loadUseStall = lwStall || flwStall;
 
+  // ===== FP LATENCY HAZARD DETECTION =====
+  // Contador de latencia para operaciones FP
+  // Se inicializa con (latencia - 1) cuando entra una nueva operación FP
+  // Se decrementa cada ciclo hasta llegar a 0
+  reg [3:0] latencyCounter;
+  reg [3:0] latencyCounter_next;
+  reg [3:0] capturedLatency;  // Capturar latencia cuando isFPE se activa
+  wire fpLatencyStall;  // Stall por latencia FP
+  
+  // Capturar la latencia cuando isFPE se activa (transición 0->1)
+  reg isFPE_prev;
+  always @(posedge clk) begin
+    if (reset) begin
+      isFPE_prev <= 1'b0;
+      capturedLatency <= 4'b0;
+    end else begin
+      isFPE_prev <= isFPE;
+      // Capturar latencia cuando isFPE se activa por primera vez
+      if (isFPE && !isFPE_prev) begin
+        // Preferir FPLatencyE, sino usar FPLatencyD
+        capturedLatency <= (FPLatencyE > 4'b0) ? FPLatencyE : FPLatencyD;
+      end
+    end
+  end
+  
+  // Lógica combinacional para el siguiente estado del contador
+  always @(*) begin
+    // Si el contador > 0, siempre decrementar (prioridad más alta)
+    if (latencyCounter > 4'b0) begin
+      latencyCounter_next = latencyCounter - 4'b0001;
+    end
+    // Si hay una operación FP (isFPE o isFPD) con latencia > 1 y contador en 0, inicializar
+    // Usar capturedLatency si está disponible, sino usar FPLatencyE o FPLatencyD
+    else if ((isFPE || isFPD) && (latencyCounter == 4'b0) && ((capturedLatency > 4'b0001) || (FPLatencyE > 4'b0001) || (FPLatencyD > 4'b0001))) begin
+      // Prioridad: capturedLatency > FPLatencyE > FPLatencyD
+      if (capturedLatency > 4'b0001) begin
+        latencyCounter_next = capturedLatency - 4'b0001;
+      end else if (FPLatencyE > 4'b0001) begin
+        latencyCounter_next = FPLatencyE - 4'b0001;  // (latencia - 1) ciclos adicionales
+      end else begin
+        latencyCounter_next = FPLatencyD - 4'b0001;  // Fallback usando FPLatencyD
+      end
+    end
+    // Si no hay operación FP o latencia <= 1, mantener contador en 0
+    else begin
+      latencyCounter_next = 4'b0;
+    end
+  end
+  
+  // Registro del contador
+  always @(posedge clk) begin
+    if (reset) begin
+      latencyCounter <= 4'b0;
+    end else begin
+      latencyCounter <= latencyCounter_next;
+    end
+  end
+  
+  // Stall cuando el contador > 0 (operación FP en progreso)
+  assign fpLatencyStall = (latencyCounter > 4'b0);
+
   // ===== CONTROL HAZARD HANDLING =====
   // Cuando se toma un salto (beq, bne, jal, jalr), las instrucciones
   // que ya están en IF y ID son incorrectas y deben descartarse
@@ -116,9 +184,15 @@ module hazard_unit(
   //    - StallF = 0: PC avanza al target del salto
   //    - StallD = 0: ID acepta nueva instrucción
   
-  assign StallF = loadUseStall;           // Detener en load-use (lw o flw)
-  assign StallD = loadUseStall;           // Detener en load-use (lw o flw)
+  // Stall total: load-use hazards O latencia FP
+  wire totalStall = loadUseStall || fpLatencyStall;
+  
+  // IMPORTANTE: Para latencia FP, NO hacemos flush de EX
+  // Queremos mantener la operación FP en EX mientras el contador cuenta
+  // Solo hacemos flush de EX para load-use (insertar burbuja) y saltos
+  assign StallF = totalStall;           // Detener en load-use o latencia FP
+  assign StallD = totalStall;           // Detener en load-use o latencia FP
   assign FlushD = PCSrcE;            // Limpiar ID cuando hay salto tomado
-  assign FlushE = loadUseStall | PCSrcE;  // Limpiar EX en load-use o salto tomado
+  assign FlushE = loadUseStall | PCSrcE;  // Limpiar EX solo en load-use o salto tomado (NO en latencia FP)
 
 endmodule

@@ -9,10 +9,11 @@ module datapath(
   input  ALUSrcD,
   input  [2:0]  ImmSrcD, 
   input  [31:0] InstrF,
-  input  [31:0] ReadDataM, // Proviene de fuera del módulo datapath, es decir, si dmem lee datos de memoria, produce ReadData
-  // Señales FP desde controller
-  input  isFPD,              // 1 si es instrucción FP
+  input  [31:0] ReadDataM, // Proviene de fuera del mï¿½dulo datapath, es decir, si dmem lee datos de memoria, produce ReadData
+  // Seï¿½ales FP desde controller
+  input  isFPD,              // 1 si es instrucciï¿½n FP
   input  [2:0] FALUControlD, // Control FALU (3 bits)
+  input  [3:0] FPLatencyD,   // Latencia FP (4 bits: ADD/SUB=1, MUL=4, DIV=12)
   input  FPRegWriteD,        // Escritura en register file FP
   input  FPMemWriteD,         // Escritura en memoria FP
   //ReadData, se conecta a ReadDataM del datapath
@@ -40,11 +41,11 @@ module datapath(
   wire ALUSrcE;
   wire ZeroE;
 
-  // Señales de control flotantes
+  // Seï¿½ales de control flotantes
   wire FPRegWriteE, FPRegWriteM, FPRegWriteW;  // Escritura en register file FP
   wire FPMemWriteE, FPMemWriteM;               // Escritura en memoria FP
 
-  // Señales internas de cada etapa del pipeline
+  // Seï¿½ales internas de cada etapa del pipeline
   // Fetch
   wire [31:0] PCPlus4F, PCNextF; //PCNextF es siguiente instruccion
 
@@ -58,17 +59,18 @@ module datapath(
   wire [31:0] SrcBE, ALUResultE, WriteDataE;
   wire [31:0] PCTargetE;  
   wire [4:0] Rs1E, Rs2E, RdE;
-  // Señales FP en EX
-  wire isFPE;                // 1 si es instrucción FP
+  // Seï¿½ales FP en EX
+  wire isFPE;                // 1 si es instrucciï¿½n FP
   wire [2:0] FALUControlE;   // Control FALU en EX
+  wire [3:0] FPLatencyE;     // Latencia FP en EX
   wire [31:0] FRD1E, FRD2E;  // Datos FP en EX
   wire [31:0] FALUResultE, FWriteDataE;
-  wire [31:0] ALUResultE_muxed;  // Resultado ALU (entero o FP según isFPE)
-  wire [31:0] WriteDataE_muxed;  // Dato a escribir (entero o FP según FPMemWriteE)
+  wire [31:0] ALUResultE_muxed;  // Resultado ALU (entero o FP segï¿½n isFPE)
+  wire [31:0] WriteDataE_muxed;  // Dato a escribir (entero o FP segï¿½n FPMemWriteE)
   // Memory
   wire [31:0] PCPlus4M;
   wire [31:0] ALUResultM, WriteDataM;
-  wire [31:0] FALUResultM, FWriteDataM;  // Señales FP separadas
+  wire [31:0] FALUResultM, FWriteDataM;  // Seï¿½ales FP separadas
   wire [4:0] RdM;
 
   // Writeback
@@ -77,17 +79,17 @@ module datapath(
   wire [31:0] FResultW;  // Resultado final FP (FALU o memoria)
   wire [4:0] RdW;
 
-  // Señales de forwarding (adelantamiento de datos)
+  // Seï¿½ales de forwarding (adelantamiento de datos)
   wire [1:0] ForwardAE, ForwardBE;
   wire [1:0] ForwardAFE, ForwardBFE;  // Forwarding para FP
   wire [31:0] SrcAE_forwarded;
   wire [31:0] FRD1E_forwarded, FRD2E_forwarded;  // Forwarding para FP
   
-  // Señales de stall y flush
+  // Seï¿½ales de stall y flush
   wire StallF, StallD, FlushD, FlushE;
   
-  // Señal de control de salto
-  wire PCSrcE;  // Decisión de salto en EX (se calcula después de ALU)
+  // Seï¿½al de control de salto
+  wire PCSrcE;  // Decisiï¿½n de salto en EX (se calcula despuï¿½s de ALU)
 
   // ===== ETAPA FETCH =====
   // Registro del PC con enable para stalling
@@ -180,11 +182,12 @@ module datapath(
     .ALUSrcD(ALUSrcD),
     .ResultSrcD(ResultSrcD),
     .ALUControlD(ALUControlD),
-    // Señales FP
+    // Seï¿½ales FP
     .isFPD(isFPD),
     .FPRegWriteD(FPRegWriteD),
     .FPMemWriteD(FPMemWriteD),
     .FALUControlD(FALUControlD),
+    .FPLatencyD(FPLatencyD),  // Latencia FP
     .FRD1D(FRD1D),
     .FRD2D(FRD2D),
 
@@ -208,6 +211,7 @@ module datapath(
     .FPRegWriteE(FPRegWriteE),
     .FPMemWriteE(FPMemWriteE),
     .FALUControlE(FALUControlE),
+    .FPLatencyE(FPLatencyE),  // Latencia FP en EX
     .FRD1E(FRD1E),
     .FRD2E(FRD2E)
     
@@ -215,6 +219,8 @@ module datapath(
 
 // ===== EXECUTE =====
   hazard_unit hu(
+    .clk(clk),
+    .reset(reset),
     // Entradas para forwarding enteros
     .Rs1E(Rs1E),
     .Rs2E(Rs2E),
@@ -232,6 +238,11 @@ module datapath(
     .ResultSrcE(ResultSrcE),
     .FPRegWriteE(FPRegWriteE),  // Para detectar flw en EX
     .RegWriteE(RegWriteE),      // Para detectar lw en EX
+    // Entradas para manejo de latencia FP
+    .isFPE(isFPE),              // 1 si es instrucciÃ³n FP en EX
+    .FPLatencyE(FPLatencyE),     // Latencia de la operaciÃ³n FP en EX
+    .isFPD(isFPD),              // 1 si es instrucciÃ³n FP en ID
+    .FPLatencyD(FPLatencyD),     // Latencia de la operaciÃ³n FP en ID
     // Entradas para flushing (control hazards) - temporal
     .PCSrcE(PCSrcE),
     // Salidas forwarding enteros
@@ -272,7 +283,7 @@ module datapath(
     .y(SrcBE)
   );
 
-  // Unidad Aritmético-Lógica Entera
+  // Unidad Aritmï¿½tico-Lï¿½gica Entera
   alu alu(
     .a(SrcAE_forwarded),
     .b(SrcBE),
@@ -301,31 +312,31 @@ module datapath(
     .y(FRD2E_forwarded)
   );
 
-  // Unidad Aritmético-Lógica Floating Point
+  // Unidad Aritmï¿½tico-Lï¿½gica Floating Point
   alu_fp #(.system(32)) fp_alu(
     .a(FRD1E_forwarded),        // Operando 1 desde register file FP (con forwarding)
     .b(FRD2E_forwarded),        // Operando 2 desde register file FP (con forwarding)
     .FALUControl(FALUControlE), // Control FALU (3 bits): 000=fadd, 001=fsub, 010=fmul, 011=fdiv
-    .y(FALUResultE),            // Resultado de la operación FP
-    .ALUFlags()                 // Flags FP (se pueden usar más adelante si es necesario)
+    .y(FALUResultE),            // Resultado de la operaciï¿½n FP
+    .ALUFlags()                 // Flags FP (se pueden usar mï¿½s adelante si es necesario)
   );
 
   // Para fsw, usar FRD2E_forwarded como dato a escribir
   assign FWriteDataE = FRD2E_forwarded;
 
-  // Mux para seleccionar entre ALU entera y FP según isFPE
+  // Mux para seleccionar entre ALU entera y FP segï¿½n isFPE
   mux2 #(WIDTH) alu_result_mux(
     .d0(ALUResultE),      // Resultado ALU entera
     .d1(FALUResultE),    // Resultado ALU FP
-    .s(isFPE),           // Selección: 0=entero, 1=FP
+    .s(isFPE),           // Selecciï¿½n: 0=entero, 1=FP
     .y(ALUResultE_muxed)
   );
 
-  // Mux para seleccionar entre WriteData entero y FP según FPMemWriteE
+  // Mux para seleccionar entre WriteData entero y FP segï¿½n FPMemWriteE
   mux2 #(WIDTH) write_data_mux(
     .d0(WriteDataE),     // Dato entero
     .d1(FWriteDataE),   // Dato FP (FRD2E)
-    .s(FPMemWriteE),    // Selección: 0=entero, 1=FP
+    .s(FPMemWriteE),    // Selecciï¿½n: 0=entero, 1=FP
     .y(WriteDataE_muxed)
   );
 
@@ -336,32 +347,32 @@ module datapath(
   );
 
 
-  // Calcular PCSrc en EX (después de ALU, cuando ZeroE está disponible)
+  // Calcular PCSrc en EX (despuï¿½s de ALU, cuando ZeroE estï¿½ disponible)
   // PCSrcE = 1 cuando:
   //   - Branch tomado: BranchE && ZeroE
   //   - Jump incondicional: JumpE
-  // Nota: Al inicio, BranchE y JumpE son 0 (desde ID_EX reset), así que PCSrcE = 0
+  // Nota: Al inicio, BranchE y JumpE son 0 (desde ID_EX reset), asï¿½ que PCSrcE = 0
   assign PCSrcE = (BranchE && ZeroE) || JumpE;
 
   // EX/MEM 
   EX_MEM exmem(
-    // Inputs (señales de control y datos desde EX stage)
+    // Inputs (seï¿½ales de control y datos desde EX stage)
     .clk(clk),
     .reset(reset),
     .RegWriteE(RegWriteE),
     .MemWriteE(MemWriteE),
     .ResultSrcE(ResultSrcE),
-    // Señales FP
+    // Seï¿½ales FP
     .FPRegWriteE(FPRegWriteE),
     .FPMemWriteE(FPMemWriteE),
     .ALUResultE(ALUResultE_muxed),  // Resultado muxed (entero o FP)
     .WriteDataE(WriteDataE_muxed),   // Dato muxed (entero o FP)
-    // Señales FP separadas
+    // Seï¿½ales FP separadas
     .FALUResultE(FALUResultE),
     .FWriteDataE(FWriteDataE),
     .PCPlus4E(PCPlus4E),
     .RdE(RdE),
-    // Outputs (señales de control y datos hacia MEM stage)
+    // Outputs (seï¿½ales de control y datos hacia MEM stage)
     .RegWriteM(RegWriteM),
     .MemWriteM(MemWriteM),
     .ResultSrcM(ResultSrcM),
@@ -391,7 +402,7 @@ module datapath(
     .RdM(RdM),
     .RegWriteM(RegWriteM),
     .ResultSrcM(ResultSrcM),
-    // Señales FP
+    // Seï¿½ales FP
     .FPRegWriteM(FPRegWriteM),
     .FALUResultM(FALUResultM),
     .ALUResultW(ALUResultW),
@@ -426,7 +437,7 @@ module datapath(
   );
 
   // ZeroE es combinacional: se activa directamente cuando ALUResultE == 0
-  // No necesita registrarse porque Zero es una señal combinacional de la ALU
-  // Se usa en EX para la decisión de branch: PCSrcE = (BranchE && ZeroE) || JumpE
+  // No necesita registrarse porque Zero es una seï¿½al combinacional de la ALU
+  // Se usa en EX para la decisiï¿½n de branch: PCSrcE = (BranchE && ZeroE) || JumpE
 
 endmodule
