@@ -4,6 +4,7 @@ module ID_EX(input clk, reset,
                 input [31:0] RD1D, RD2D, PCD,
                 input [4:0] Rs1D, Rs2D, RdD,
                 input [31:0] ImmExtD, PCPlus4D,
+                input [31:0] InstrD,  // Instrucción para debugging
                 input RegWriteD, MemWriteD, JumpD, BranchD, ALUSrcD,
                 input [1:0] ResultSrcD,
                 input [2:0] ALUControlD,
@@ -18,6 +19,7 @@ module ID_EX(input clk, reset,
                 output reg [31:0] RD1E, RD2E, PCE,
                 output reg [4:0] Rs1E, Rs2E, RdE,
                 output reg [31:0] ImmExtE, PCPlus4E,
+                output reg [31:0] InstrE,  // Instrucción para debugging
                 output reg RegWriteE, MemWriteE, JumpE, BranchE, ALUSrcE,
                 output reg [1:0] ResultSrcE,
                 output reg [2:0] ALUControlE,
@@ -51,6 +53,7 @@ module ID_EX(input clk, reset,
       RdE <= 0;
       ImmExtE <= 0;
       PCPlus4E <= 0;
+      InstrE <= 32'h00000013;  // NOP para debugging
       RegWriteE <= 0;
       MemWriteE <= 0;
       JumpE <= 0;
@@ -75,6 +78,7 @@ module ID_EX(input clk, reset,
       RdE <= 0;
       ImmExtE <= 0;
       PCPlus4E <= 0;
+      InstrE <= 32'h00000013;  // NOP para debugging
       RegWriteE <= 0;
       MemWriteE <= 0;
       JumpE <= 0;
@@ -106,6 +110,7 @@ module ID_EX(input clk, reset,
       RdE <= RdD;
       ImmExtE <= ImmExtD;
       PCPlus4E <= PCPlus4D;
+      InstrE <= InstrD;  // Propagación de instrucción
       RegWriteE <= RegWriteD;
       MemWriteE <= MemWriteD;
       JumpE <= JumpD;

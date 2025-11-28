@@ -7,13 +7,16 @@ module MEM_WB(input clk, reset,
                  // Señales FP
                  input FPRegWriteM,
                  input [31:0] FALUResultM,  // Resultado ALU FP desde MEM
+                 input [31:0] InstrM,  // Instrucción para debugging
                  output reg [31:0] ALUResultW, ReadDataW, PCPlus4W,
                  output reg [4:0] RdW,
                  output reg RegWriteW,
                  output reg [1:0] ResultSrcW,
                  // Salidas FP
                  output reg FPRegWriteW,
-                 output reg [31:0] FALUResultW);  // Resultado ALU FP hacia WB
+                 output reg [31:0] FALUResultW,  // Resultado ALU FP hacia WB
+                 output reg [31:0] InstrW  // Instrucción para debugging
+);
 
   always @(posedge clk or posedge reset) begin
     if (reset) begin
@@ -25,6 +28,7 @@ module MEM_WB(input clk, reset,
       ResultSrcW <= 0;
       FPRegWriteW <= 0;
       FALUResultW <= 0;
+      InstrW <= 32'h00000013;  // NOP para debugging
     end else begin
       ALUResultW <= ALUResultM;
       ReadDataW <= ReadDataM;
@@ -34,6 +38,7 @@ module MEM_WB(input clk, reset,
       ResultSrcW <= ResultSrcM;
       FPRegWriteW <= FPRegWriteM;
       FALUResultW <= FALUResultM;
+      InstrW <= InstrM;  // Propagación de instrucción
     end
   end
 endmodule

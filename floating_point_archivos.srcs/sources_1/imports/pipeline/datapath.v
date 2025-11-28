@@ -62,6 +62,7 @@ module datapath(
   wire [31:0] SrcBE, ALUResultE, WriteDataE;
   wire [31:0] PCTargetE;  
   wire [4:0] Rs1E, Rs2E, RdE;
+  wire [31:0] InstrE;  // Instrucción en EX para debugging
   // Se�ales FP en EX
   wire isFPE;                // 1 si es instrucci�n FP
   wire [2:0] FALUControlE;   // Control FALU en EX
@@ -75,12 +76,14 @@ module datapath(
   wire [31:0] ALUResultM, WriteDataM;
   wire [31:0] FALUResultM, FWriteDataM;  // Se�ales FP separadas
   wire [4:0] RdM;
+  wire [31:0] InstrM;  // Instrucción en MEM para debugging
 
   // Writeback
   wire [31:0] ALUResultW, ReadDataW, PCPlus4W;
   wire [31:0] ResultW, FALUResultW;  // Resultado ALU FP en WB
   wire [31:0] FResultW;  // Resultado final FP (FALU o memoria)
   wire [4:0] RdW;
+  wire [31:0] InstrW;  // Instrucción en WB para debugging
 
   // Se�ales de forwarding (adelantamiento de datos)
   wire [1:0] ForwardAE, ForwardBE;
@@ -179,6 +182,7 @@ module datapath(
     .RdD(InstrD[11:7]),
     .ImmExtD(ImmExtD),
     .PCPlus4D(PCPlus4D),
+    .InstrD(InstrD),  // Instrucción para debugging
     .RegWriteD(RegWriteD),
     .MemWriteD(MemWriteD),
     .JumpD(JumpD),
@@ -203,6 +207,7 @@ module datapath(
     .RdE(RdE),
     .ImmExtE(ImmExtE),
     .PCPlus4E(PCPlus4E),
+    .InstrE(InstrE),  // Instrucción para debugging
     .RegWriteE(RegWriteE),
     .MemWriteE(MemWriteE),
     .JumpE(JumpE),
@@ -376,6 +381,7 @@ module datapath(
     .FWriteDataE(FWriteDataE),
     .PCPlus4E(PCPlus4E),
     .RdE(RdE),
+    .InstrE(InstrE),  // Instrucción para debugging
     // Outputs (se�ales de control y datos hacia MEM stage)
     .RegWriteM(RegWriteM),
     .MemWriteM(MemWriteM),
@@ -389,7 +395,8 @@ module datapath(
     .FALUResultM(FALUResultM),
     .FWriteDataM(FWriteDataM),
     .PCPlus4M(PCPlus4M),
-    .RdM(RdM)
+    .RdM(RdM),
+    .InstrM(InstrM)  // Instrucción para debugging
   );
 
   // ===== MEMORY =====
@@ -417,7 +424,8 @@ module datapath(
     .ResultSrcW(ResultSrcW),
     // Salidas FP
     .FPRegWriteW(FPRegWriteW),
-    .FALUResultW(FALUResultW)
+    .FALUResultW(FALUResultW),
+    .InstrW(InstrW)  // Instrucción para debugging
   );
 
   // ===== ETAPA WRITEBACK =====

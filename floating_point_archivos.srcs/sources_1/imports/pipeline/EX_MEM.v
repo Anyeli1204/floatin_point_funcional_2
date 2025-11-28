@@ -16,6 +16,7 @@ module EX_MEM(
     input [31:0] FWriteDataE,
     input [31:0] PCPlus4E,
     input [4:0] RdE,
+    input [31:0] InstrE,  // Instrucción para debugging
     
     output reg RegWriteM,
     output reg MemWriteM,
@@ -30,7 +31,8 @@ module EX_MEM(
     output reg [31:0] FALUResultM,
     output reg [31:0] FWriteDataM,
     output reg [31:0] PCPlus4M,
-    output reg [4:0] RdM
+    output reg [4:0] RdM,
+    output reg [31:0] InstrM  // Instrucción para debugging
 );
 
 always @(posedge clk or posedge reset) begin
@@ -46,6 +48,7 @@ always @(posedge clk or posedge reset) begin
         FWriteDataM <= 32'b0;
         PCPlus4M    <= 32'b0;
         RdM         <= 5'b0;
+        InstrM      <= 32'h00000013;  // NOP para debugging
     end else begin
         RegWriteM   <= RegWriteE;
         MemWriteM   <= MemWriteE;
@@ -58,6 +61,7 @@ always @(posedge clk or posedge reset) begin
         FWriteDataM <= FWriteDataE;
         PCPlus4M    <= PCPlus4E;
         RdM         <= RdE;
+        InstrM      <= InstrE;  // Propagación de instrucción
     end
 end
 

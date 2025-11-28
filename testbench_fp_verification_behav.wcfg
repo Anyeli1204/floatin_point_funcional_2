@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="150.640 ns"></ZoomStartTime>
-      <ZoomEndTime time="222.241 ns"></ZoomEndTime>
-      <Cursor1Time time="184.740 ns"></Cursor1Time>
+      <ZoomStartTime time="3.166 ns"></ZoomStartTime>
+      <ZoomEndTime time="122.967 ns"></ZoomEndTime>
+      <Cursor1Time time="103.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="223"></NameColumnWidth>
-      <ValueColumnWidth column_width="120"></ValueColumnWidth>
+      <ValueColumnWidth column_width="115"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="19" />
+   <WVObjectSize size="22" />
    <wvobject fp_name="/testbench_fp_verification/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -97,5 +97,19 @@
    <wvobject fp_name="/testbench_fp_verification/dut/Instr" type="array">
       <obj_property name="ElementShortName">Instr[31:0]</obj_property>
       <obj_property name="ObjectShortName">Instr[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_fp_verification/dut/rvpipeline/dp/hu/ForwardAE" type="array">
+      <obj_property name="ElementShortName">ForwardAE[1:0]</obj_property>
+      <obj_property name="ObjectShortName">ForwardAE[1:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_fp_verification/dut/rvpipeline/dp/hu/ForwardBE" type="array">
+      <obj_property name="ElementShortName">ForwardBE[1:0]</obj_property>
+      <obj_property name="ObjectShortName">ForwardBE[1:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_fp_verification/dut/rvpipeline/dp/InstrE" type="array">
+      <obj_property name="ElementShortName">InstrE[31:0]</obj_property>
+      <obj_property name="ObjectShortName">InstrE[31:0]</obj_property>
    </wvobject>
 </wave_config>
