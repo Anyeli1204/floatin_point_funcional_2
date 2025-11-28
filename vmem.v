@@ -20,7 +20,11 @@ module vmem(
     wire [31:0] sum = rv_c + wd;
 
     always @(posedge clk) begin
-        if(we) VEC_RAM[addr_c[31:2]] <= sum;
+        if(we) begin 
+            VEC_RAM[addr_c[31:2]] <= sum;
+        end 
     end
+
+    always @(*) $display("wa: %h", sum);
 
 endmodule
