@@ -57,11 +57,12 @@ module controller_fp(
   
   // Calcular latencia según operación FP (usando FALUControl directamente)
   // FALUControl: 000=fadd, 001=fsub, 010=fmul, 011=fdiv
-  // ADD/SUB: 1 ciclo, MUL: 4 ciclos, DIV: 12 ciclos
+  // NOTA: La FALU es combinacional, todas las operaciones tienen 1 ciclo de latencia real
+  // Las latencias mayores eran artificiales. Ahora todas son 1 ciclo.
   // Usamos 4 bits para latencia (máximo 15 ciclos)
   assign FPLatency = (isFP && (FALUControl == 3'b000 || FALUControl == 3'b001)) ? 4'b0001 :  // ADD/SUB: 1
-                     (isFP && (FALUControl == 3'b010)) ? 4'b0100 :                            // MUL: 4
-                     (isFP && (FALUControl == 3'b011)) ? 4'b1100 :                            // DIV: 12
+                     (isFP && (FALUControl == 3'b010)) ? 4'b0001 :                            // MUL: 1 (combinacional)
+                     (isFP && (FALUControl == 3'b011)) ? 4'b0001 :                            // DIV: 1 (combinacional)
                      4'b0000;
   
   // Señales de control FP derivadas

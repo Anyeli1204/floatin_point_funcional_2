@@ -1,4 +1,4 @@
-Running: xsim.dir/testbench_fp_verification_behav/xsimk.exe -simmode gui -wdb testbench_fp_verification_behav.wdb -simrunnum 0 -socket 60103
+Running: xsim.dir/testbench_fp_verification_behav/xsimk.exe -simmode gui -wdb testbench_fp_verification_behav.wdb -simrunnum 0 -socket 55303
 Design successfully loaded
-Design Loading Memory Usage: 9908 KB (Peak: 9908 KB)
+Design Loading Memory Usage: 9884 KB (Peak: 9884 KB)
 Design Loading CPU Usage: 15 ms

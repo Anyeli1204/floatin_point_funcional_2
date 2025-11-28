@@ -9,21 +9,10 @@ module dmem(input  clk, we,
     // Inicializar memoria vacía
     for (i = 0; i < 64; i = i + 1)
       RAM[i] = 32'h00000000;
-
-    // ============================
-    //   ZONA DE ENTEROS [0..15]
-    // ============================
-    // Estos los usa tu código entero con lw/sw
     RAM[0] = 32'd10;  // valor para lw x15, 0(x0)
     RAM[1] = 32'd3;   // puedes usarlo si luego amplías el test
     RAM[2] = 32'd0;   // será pisado por sw x5, 8(x0)
     RAM[3] = 32'd5;   // opcional, por si luego pruebas algo más
-    // RAM[4..15] quedan en 0
-
-    // ============================
-    //   ZONA FLOATING POINT [16..27]
-    // ============================
-    // IEEE-754 Single Precision (32 bits)
     RAM[16] = 32'h3f800000;  // 1.0
     RAM[17] = 32'h40000000;  // 2.0
     RAM[18] = 32'h40400000;  // 3.0
