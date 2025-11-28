@@ -11,7 +11,9 @@ module nextaddr(
     // i, j, k de salida
     output reg [31:0] next_i, next_j, next_k,
 
-    output reg adv_next_i, adv_next_j
+    output reg adv_next_i, adv_next_j,
+
+    output reg not_first_iter
     
 );
 
@@ -24,6 +26,7 @@ module nextaddr(
             next_i <= 32'b0;
             next_j <= 32'b0;
             next_k <= 32'b0;
+            not_first_iter <= 1'b1;
         end
         else if((curr_i+1 == num_i && curr_j+1 == num_j && curr_k+1 == num_k)) begin
             adv_next_i <= 1'bx;
@@ -31,6 +34,7 @@ module nextaddr(
             next_i <= 32'bx;
             next_j <= 32'bx;
             next_k <= 32'bx;
+            not_first_iter <= 1'bx;
         end
         else begin
 
@@ -59,6 +63,8 @@ module nextaddr(
             next_i <= curr_i;
             next_j <= curr_j;
             next_k <= curr_k;
+            not_first_iter <= 1'b0;
+
         end
     
     end

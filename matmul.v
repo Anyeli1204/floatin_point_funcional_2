@@ -5,6 +5,7 @@ module matmul(
 
     wire [31:0] rd_A_rows, rd_B_rows;
     wire [31:0] rd_A_cols, rd_B_cols;
+    reg first_iter;
 
     // Primer módulo solo para filas
     vmem MEM_rows (
@@ -33,6 +34,7 @@ module matmul(
     reg [31:0] i, j, k;
     wire [31:0] next_i, next_j, next_k;
     wire adv_i, adv_j;
+    wire not_first_iter;
 
     // Bases de los datos, saltando filas/columnas
     wire [31:0] baseA = addr_a + 8;
@@ -52,6 +54,7 @@ module matmul(
         .addrM1(baseA),
         .addrM2(baseB),
         .addrM3(baseC),
+        .first_iter(first_iter),
 
         .advance_i(adv_i),
         .advance_j(adv_j),
@@ -69,7 +72,9 @@ module matmul(
 
         .next_i(next_i),
         .next_j(next_j),
-        .next_k(next_k)
+        .next_k(next_k),
+
+        .not_first_iter(not_first_iter)
 
     );
 
@@ -78,6 +83,7 @@ module matmul(
         i <= next_i;
         j <= next_j;
         k <= next_k;
+        first_iter <= not_first_iter;
     end
 
 endmodule

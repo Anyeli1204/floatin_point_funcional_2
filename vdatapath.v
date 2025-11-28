@@ -14,6 +14,9 @@ module vdatapath(
     // Señales
     input advance_i, advance_j,
 
+    // first iter mux
+    input first_iter,
+
     // Shape <- ( num_i x num_j ) prod (  num_j x num_k )
     input [31:0] num_i, num_j, num_k,
 
@@ -24,8 +27,10 @@ module vdatapath(
     output adv_next_i, adv_next_j,
 
     // Siguientes i, j, k
-    output [31:0] next_i, next_j, next_k
+    output [31:0] next_i, next_j, next_k,
 
+    // ya no es first iter
+    output not_first_iter
 
 );
 
@@ -35,12 +40,12 @@ module vdatapath(
     //          for (int j)
 
     // M1[i, k] = addrM1 + (i * num_j + k) * 4
-    wire [31:0] addr_a = addrM1 + ((i * num_j + k) << 2);
+    wire [31:0] addr_a = addrM1 + ((i * num_k + k) << 2);
 
-    // M2[k, j] = addrM2 + (k * num_j + j) * 4
+    // M2[k, j] = addrM2 + (k * num_k + j) * 4
     wire [31:0] addr_b = addrM2 + ((k * num_j + j) << 2);
 
-    // M3[i, j] = addrM3 + (i * num_j + j) * 4
+    // M3[i, j] = addrM3 + (i * num_k + j) * 4
     wire [31:0] addr_c = addrM3 + ((i * num_j + j) << 2);
 
 
@@ -85,11 +90,12 @@ module vdatapath(
         .y(curr_j)
     );
 
-    vmux3 mux_k(
+    vmux4 mux_k(
         .d0(32'b0),
         .d1(k+1),
         .d2(32'b0),
         .s({advance_i, ~advance_j}),
+        .is_first_iter(first_iter),
         .y(curr_k)
     );
 
@@ -116,7 +122,10 @@ module vdatapath(
 
         // next signals
         .adv_next_i(adv_next_i),
-        .adv_next_j(adv_next_j)
+        .adv_next_j(adv_next_j),
+
+        // first iter control
+        .not_first_iter(not_first_iter)
 
     );
 
