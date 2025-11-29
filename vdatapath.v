@@ -20,6 +20,9 @@ module vdatapath(
     // Shape <- ( num_i x num_j ) prod (  num_j x num_k )
     input [31:0] num_i, num_j, num_k,
 
+    // Actualmente es la iteración final...?
+    input eval_done,
+
     // i, j, k <- deben ser unsigned value
     input [31:0] i, j, k,
 
@@ -30,7 +33,10 @@ module vdatapath(
     output [31:0] next_i, next_j, next_k,
 
     // ya no es first iter
-    output not_first_iter
+    output not_first_iter,
+
+    // Setear de que se acabo...
+    output is_done
 
 );
 
@@ -119,6 +125,10 @@ module vdatapath(
         .next_i(next_i),
         .next_j(next_j),
         .next_k(next_k),
+
+        // eval done
+        .eval_done(eval_done),
+        .is_done(is_done),
 
         // next signals
         .adv_next_i(adv_next_i),
