@@ -39,42 +39,8 @@ module vdatapath(
     //      for (int k)
     //          for (int j)
 
-    // M1[i, k] = addrM1 + (i * num_j + k) * 4
-    wire [31:0] addr_a = addrM1 + ((i * num_k + k) << 2);
-
-    // M2[k, j] = addrM2 + (k * num_k + j) * 4
-    wire [31:0] addr_b = addrM2 + ((k * num_j + j) << 2);
-
-    // M3[i, j] = addrM3 + (i * num_k + j) * 4
-    wire [31:0] addr_c = addrM3 + ((i * num_j + j) << 2);
-
-
-    wire[31:0] rd1, rd2;
-    wire[31:0] sum;
-    wire[31:0] prod;
-
-
-    // Rescato los valores de las matrices
-    // y sumo el resultado parcial
-    vmem vector_mem(
-
-        // Inputs
-        .clk(clk),
-        .we(1'b1),
-        .addr_a(addr_a),
-        .addr_b(addr_b),
-        .addr_c(addr_c),
-        .wd(prod),
-
-        // Outputs
-        .rv_a(rd1),
-        .rv_b(rd2)
-
-    );
-
-    assign prod = rd1 * rd2;   // multiplicación unsigned
-
     wire[31:0] curr_i, curr_j, curr_k;
+
     vmux2 mux_i(
         .d0(i),
         .d1(i+1),
@@ -98,6 +64,45 @@ module vdatapath(
         .is_first_iter(first_iter),
         .y(curr_k)
     );
+
+    // Usamos curr_i, curr_j, curr_k para calcular direcciones (valores reales de la iteración actual)
+    // Esto asegura que el último elemento se calcule correctamente
+    // M1[curr_i, curr_k] = addrM1 + (curr_i * num_k + curr_k) * 4  (A tiene num_i filas y num_k columnas)
+    wire [31:0] addr_a = addrM1 + ((curr_i * num_k + curr_k) << 2);
+
+    // M2[curr_k, curr_j] = addrM2 + (curr_k * num_j + curr_j) * 4  (B tiene num_k filas y num_j columnas)
+    wire [31:0] addr_b = addrM2 + ((curr_k * num_j + curr_j) << 2);
+
+    // M3[curr_i, curr_j] = addrM3 + (curr_i * num_j + curr_j) * 4  (C tiene num_i filas y num_j columnas)
+    wire [31:0] addr_c = addrM3 + ((curr_i * num_j + curr_j) << 2);
+
+    // Señal para indicar si estamos en una iteración válida usando curr_* (valores reales)
+    // Escribimos solo si curr_i, curr_j, curr_k son válidos
+    wire valid_iter = (curr_i < num_i) && (curr_j < num_j) && (curr_k < num_k);
+
+    wire[31:0] rd1, rd2;
+    wire[31:0] sum;
+    wire[31:0] prod;
+
+    // Rescato los valores de las matrices
+    // y sumo el resultado parcial
+    vmem vector_mem(
+
+        // Inputs
+        .clk(clk),
+        .we(valid_iter && !reset),  // Solo escribimos si estamos en una iteración válida
+        .addr_a(addr_a),
+        .addr_b(addr_b),
+        .addr_c(addr_c),
+        .wd(prod),
+
+        // Outputs
+        .rv_a(rd1),
+        .rv_b(rd2)
+
+    );
+
+    assign prod = rd1 * rd2;   // multiplicación unsigned
 
     nextaddr ff(
 
