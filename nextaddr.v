@@ -13,10 +13,7 @@ module nextaddr(
 
     output reg adv_next_i, adv_next_j,
 
-    output reg not_first_iter,
-
-    input eval_done,
-    output reg is_done
+    output reg not_first_iter
     
 );
 
@@ -30,25 +27,17 @@ module nextaddr(
             next_j <= 32'b0;
             next_k <= 32'b0;
             not_first_iter <= 1'b1;
-            is_done <= 1'b0;
         end
-        else if(eval_done) begin
-            adv_next_i <= 1'bx;
-            adv_next_j <= 1'bx;
-            next_i <= 32'bx;
-            next_j <= 32'bx;
-            next_k <= 32'bx;
-            not_first_iter <= 1'bx;
-            is_done <= 1'bx;
+        else if((curr_i+1 == num_i && curr_j+1 == num_j && curr_k+1 == num_k)) begin
+                adv_next_i <= 1'bx;
+                adv_next_j <= 1'bx;
+                next_i <= 32'bx;
+                next_j <= 32'bx;
+                next_k <= 32'bx;
+                not_first_iter <= 1'bx;
         end
-        else begin
         
-            if((curr_i+1 == num_i && curr_j+1 == num_j && curr_k+1 == num_k)) begin
-                is_done <= 1'b1;
-                adv_next_i <= 1'b1;
-                adv_next_j <= 1'b0;
-            end
-            else begin
+        else begin
 
                 // Una iteración antes de que acabe, setee las señales para que en la última 
                 // iteración rescate los valores esperados.
@@ -72,18 +61,15 @@ module nextaddr(
                 
                 end
 
+                // Seteo los siguientes i, j, k según los valores de los mux's
+                next_i <= curr_i;
+                next_j <= curr_j;
+                next_k <= curr_k;
+                
                 not_first_iter <= 1'b0;
-                is_done <= 1'b0;
-
             end
-
-            // Seteo los siguientes i, j, k según los valores de los mux's
-            next_i <= curr_i;
-            next_j <= curr_j;
-            next_k <= curr_k;
             
         end
 
-    end
 
 endmodule

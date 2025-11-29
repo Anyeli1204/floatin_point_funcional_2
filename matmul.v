@@ -5,8 +5,13 @@ module matmul(
 
     wire [31:0] rd_A_rows, rd_B_rows;
     wire [31:0] rd_A_cols, rd_B_cols;
-    reg first_iter = 1'b1;
-    reg eval_done = 1'b0;
+    
+    reg first_iter;
+    
+    initial begin
+        first_iter = 1'b1;  // Inicializamos first_iter a 1 (es primera iteración)
+    end
+
 
     // Primer módulo solo para filas
     vmem MEM_rows (
@@ -76,10 +81,7 @@ module matmul(
         .next_j(next_j),
         .next_k(next_k),
 
-        .not_first_iter(not_first_iter),
-
-        .eval_done(eval_done),
-        .is_done(is_done)
+        .not_first_iter(not_first_iter)
 
     );
 
@@ -89,7 +91,6 @@ module matmul(
         j <= next_j;
         k <= next_k;
         first_iter <= not_first_iter;
-        eval_done <= is_done;
     end
 
 endmodule
