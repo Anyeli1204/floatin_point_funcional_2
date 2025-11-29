@@ -6,6 +6,10 @@ module matmul(
     wire [31:0] rd_A_rows, rd_B_rows;
     wire [31:0] rd_A_cols, rd_B_cols;
     reg first_iter;
+    
+    initial begin
+        first_iter = 1'b1;  // Inicializamos first_iter a 1 (es primera iteración)
+    end
 
     // Primer módulo solo para filas
     vmem MEM_rows (
