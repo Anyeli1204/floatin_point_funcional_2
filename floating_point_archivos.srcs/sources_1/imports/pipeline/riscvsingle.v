@@ -23,13 +23,11 @@ module riscvpipeline(input  clk, reset,
   wire [31:0] InstrD;
   wire PCSrcM_unused;  // Not used in pipeline version (PCSrc se calcula en EX)
   
-  // Señales FP desde controller
+  // Seï¿½ales FP desde controller
   wire isFPD;
   wire [2:0] FALUControlD;
   wire FPRegWriteD;
   wire FPMemWriteD;
-  wire [3:0] FPLatency;      // Latencia FP desde controller
-  wire [3:0] FPLatencyD;     // Latencia FP (conectada desde controller)
 
   // Controller instantiation (con soporte FP)
   controller_fp c(
@@ -47,16 +45,14 @@ module riscvpipeline(input  clk, reset,
     .Branch(BranchD),
     .ImmSrc(ImmSrcD),
     .ALUControl(ALUControlD),
-    // Señales FP
+    // Seï¿½ales FP
     .isFP(isFPD),
-    .FPLatency(FPLatency),      // Salida del controller
     .FALUControl(FALUControlD),
     .FPRegWrite(FPRegWriteD),
     .FPMemWrite(FPMemWriteD)
   );
   
-  // Conectar FPLatency del controller a FPLatencyD explícitamente
-  assign FPLatencyD = FPLatency;
+  // Conectar FPLatency del controller a FPLatencyD explï¿½citamente
 
   // Datapath instantiation (con soporte floating point)
   datapath dp(
@@ -70,10 +66,9 @@ module riscvpipeline(input  clk, reset,
     .BranchD(BranchD),
     .ImmSrcD(ImmSrcD),
     .ALUControlD(ALUControlD),
-    // Señales FP
+    // Seï¿½ales FP
     .isFPD(isFPD),
     .FALUControlD(FALUControlD),
-    .FPLatencyD(FPLatencyD),  // Latencia FP para manejo de stalls
     .FPRegWriteD(FPRegWriteD),
     .FPMemWriteD(FPMemWriteD),
     .ZeroE(ZeroE),

@@ -1,6 +1,5 @@
 // Unidad de detección de hazards con forwarding, stalling y flushing
 module hazard_unit(
-  input clk, reset,  // Reloj y reset para contador de latencia
   // Entradas desde la etapa Decode (ID)
   input [4:0] Rs1D, Rs2D,
   
@@ -8,15 +7,6 @@ module hazard_unit(
   input [4:0] Rs1E, Rs2E, RdE,
   input [1:0] ResultSrcE,  // Para detectar lw/flw (ResultSrcE[0] = 1)
   input PCSrcE,            // Para detectar saltos tomados
-  input FPRegWriteE,      // Para detectar flw (FPRegWriteE = 1 cuando es flw)
-  input RegWriteE,        // Para detectar lw (RegWriteE = 1 cuando es lw)
-  // Entradas para manejo de latencia FP
-  input isFPE,            // 1 si es instrucción FP en EX
-  input [3:0] FPLatencyE, // Latencia de la operación FP en EX
-  // Nota: isFPD y FPLatencyD se mantienen para compatibilidad con el datapath,
-  // pero no se usan en la lógica de stall (solo se usa isFPE y FPLatencyE)
-  input isFPD,            // 1 si es instrucción FP en ID (Decode) - no usado aquí
-  input [3:0] FPLatencyD,  // Latencia de la operación FP en ID - no usado aquí
   
   // Entradas desde la etapa Memory (MEM)
   input [4:0] RdM,
@@ -86,86 +76,34 @@ module hazard_unit(
     // Sin forwarding, usar valor del banco de registros FP
     2'b00;
 
-  // ===== FP LATENCY HAZARD DETECTION =====
-  // Contador de latencia para operaciones FP con latencia > 1
-  // Se inicializa cuando una operación FP entra a EX con latencia > 1
-  // Se decrementa cada ciclo hasta llegar a 0
-  reg [3:0] latencyCounter;
-  reg [3:0] latencyCounter_next;
-  
-  // Lógica del contador de latencia
-  always @(*) begin
-    if (reset) begin
-      latencyCounter_next = 4'b0;
-    end else if (latencyCounter > 4'b0) begin
-      // Si el contador está activo, decrementar
-      latencyCounter_next = latencyCounter - 4'b0001;
-    end else if (isFPE && (FPLatencyE > 4'b0001)) begin
-      // Si hay una operación FP en EX con latencia > 1, inicializar contador
-      latencyCounter_next = FPLatencyE - 4'b0001;  // (latencia - 1) ciclos de stall
-    end else begin
-      // Mantener en 0
-      latencyCounter_next = 4'b0;
-    end
-  end
-  
-  // Registro del contador
-  always @(posedge clk) begin
-    if (reset) begin
-      latencyCounter <= 4'b0;
-    end else begin
-      latencyCounter <= latencyCounter_next;
-    end
-  end
   
   // ===== CONTROL HAZARD HANDLING =====
   // Cuando se toma un salto (beq, bne, jal, jalr), las instrucciones
   // que ya están en IF y ID son incorrectas y deben descartarse
   
   // Reglas de propagación:
-  // 1. Load-use hazard:
+  // 1. Load-use hazard (lw/flw):
   //    - StallF = 1: No avanzar PC
   //    - StallD = 1: Mantener instrucción en ID
   //    - FlushE = 1: Insertar NOP en EX
   //
-  // 2. FP Latency hazard (latencia > 1):
-  //    - StallF = 1: No avanzar PC
-  //    - StallD = 1: Mantener instrucción en ID
-  //    - FlushE = 0: Mantener operación FP en EX
-  //
-  // 3. Control hazard (salto tomado):
+  // 2. Control hazard (salto tomado):
   //    - FlushD = 1: Descartar instrucción en ID
   //    - FlushE = 1: Descartar instrucción en EX
   //    - StallF = 0: PC avanza al target del salto
   //    - StallD = 0: ID acepta nueva instrucción
   
   // ===== STALL Y FLUSH - C�?LCULO DIRECTO =====
-  // Stall cuando hay load-use hazard (lw/flw en EX con dependencia RAW) 
-  // O cuando el contador de latencia FP está activo
+  // Stall cuando hay load-use hazard (lw/flw en EX con dependencia RAW)
   // Load-use: ResultSrcE[0] = 1 (load) y hay dependencia RAW con ID
-  // IMPORTANTE: lw escribe en registro entero, flw escribe en registro FP
-  // Solo hacer stall si hay dependencia real del mismo tipo
-  // lw en EX solo causa stall si instrucción en ID es entera y necesita el dato
-  // flw en EX puede causar stall si instrucción en ID necesita el registro FP
-  assign StallF = (ResultSrcE[0] && 
-                   ((RegWriteE && !FPRegWriteE && ((Rs1D == RdE) || (Rs2D == RdE))) ||  // lw (entero) con dependencia entera
-                    (FPRegWriteE && ((Rs1D == RdE) || (Rs2D == RdE)))) &&  // flw (FP) con dependencia
-                   (RdE != 5'b0)) ||  // Load-use hazard
-                  (latencyCounter > 4'b0);  // Latencia FP activa
+  wire lwStall;
+  assign lwStall = ResultSrcE[0] &&           // la instrucción en EX es load
+                   ((Rs1D == RdE) || (Rs2D == RdE)) &&  // dependencia RAW
+                   (RdE != 5'b0);             // ignorar x0
   
-  assign StallD = (ResultSrcE[0] && 
-                   ((RegWriteE && !FPRegWriteE && ((Rs1D == RdE) || (Rs2D == RdE))) ||  // lw (entero) con dependencia entera
-                    (FPRegWriteE && ((Rs1D == RdE) || (Rs2D == RdE)))) &&  // flw (FP) con dependencia
-                   (RdE != 5'b0)) ||  // Load-use hazard
-                  (latencyCounter > 4'b0);  // Latencia FP activa
-  
-  // Flush cuando hay salto tomado O load-use hazard (insertar burbuja en EX)
-  // NO hacer flush para latencia FP (mantener operación FP en EX)
-  assign FlushD = PCSrcE;
-  assign FlushE = (ResultSrcE[0] && 
-                   ((RegWriteE && !FPRegWriteE && ((Rs1D == RdE) || (Rs2D == RdE))) ||  // lw (entero) con dependencia entera
-                    (FPRegWriteE && ((Rs1D == RdE) || (Rs2D == RdE)))) &&  // flw (FP) con dependencia
-                   (RdE != 5'b0)) ||  // Load-use hazard (insertar NOP en EX)
-                  PCSrcE;  // Salto tomado
+  assign StallF = lwStall;          // solo se stallea en load-use
+  assign StallD = lwStall;
+  assign FlushD = PCSrcE;           // limpiar ID si hay salto tomado
+  assign FlushE = lwStall | PCSrcE; // burbuja en EX por load-use o branch
 
 endmodule

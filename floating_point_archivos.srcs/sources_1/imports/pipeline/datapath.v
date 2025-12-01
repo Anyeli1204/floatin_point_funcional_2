@@ -13,7 +13,6 @@ module datapath(
   // Se�ales FP desde controller
   input  isFPD,              // 1 si es instrucci�n FP
   input  [2:0] FALUControlD, // Control FALU (3 bits)
-  input  [3:0] FPLatencyD,   // Latencia FP (4 bits: ADD/SUB=1, MUL=4, DIV=12)
   input  FPRegWriteD,        // Escritura en register file FP
   input  FPMemWriteD,         // Escritura en memoria FP
   //ReadData, se conecta a ReadDataM del datapath
@@ -66,7 +65,6 @@ module datapath(
   // Se�ales FP en EX
   wire isFPE;                // 1 si es instrucci�n FP
   wire [2:0] FALUControlE;   // Control FALU en EX
-  wire [3:0] FPLatencyE;     // Latencia FP en EX
   wire [31:0] FRD1E, FRD2E;  // Datos FP en EX
   wire [31:0] FALUResultE, FWriteDataE;
   wire [31:0] ALUResultE_muxed;  // Resultado ALU (entero o FP seg�n isFPE)
@@ -195,7 +193,6 @@ module datapath(
     .FPRegWriteD(FPRegWriteD),
     .FPMemWriteD(FPMemWriteD),
     .FALUControlD(FALUControlD),
-    .FPLatencyD(FPLatencyD),  // Latencia FP
     .FRD1D(FRD1D),
     .FRD2D(FRD2D),
 
@@ -220,7 +217,6 @@ module datapath(
     .FPRegWriteE(FPRegWriteE),
     .FPMemWriteE(FPMemWriteE),
     .FALUControlE(FALUControlE),
-    .FPLatencyE(FPLatencyE),  // Latencia FP en EX
     .FRD1E(FRD1E),
     .FRD2E(FRD2E)
     
@@ -228,8 +224,6 @@ module datapath(
 
 // ===== EXECUTE =====
   hazard_unit hu(
-    .clk(clk),
-    .reset(reset),
     // Entradas para forwarding enteros
     .Rs1E(Rs1E),
     .Rs2E(Rs2E),
@@ -245,14 +239,7 @@ module datapath(
     .Rs2D(InstrD[24:20]),
     .RdE(RdE),
     .ResultSrcE(ResultSrcE),
-    .FPRegWriteE(FPRegWriteE),  // Para detectar flw en EX
-    .RegWriteE(RegWriteE),      // Para detectar lw en EX
-    // Entradas para manejo de latencia FP
-    .isFPE(isFPE),              // 1 si es instrucción FP en EX
-    .FPLatencyE(FPLatencyE),     // Latencia de la operación FP en EX
-    .isFPD(isFPD),              // 1 si es instrucción FP en ID
-    .FPLatencyD(FPLatencyD),     // Latencia de la operación FP en ID
-    // Entradas para flushing (control hazards) - temporal
+    // Entradas para flushing (control hazards)
     .PCSrcE(PCSrcE),
     // Salidas forwarding enteros
     .ForwardAE(ForwardAE),
@@ -262,8 +249,8 @@ module datapath(
     .ForwardBFE(ForwardBFE),
     .StallF(StallF),
     .StallD(StallD),
-    .FlushD(FlushD),  // Temporal, se actualizar? despu?s
-    .FlushE(FlushE)  // Temporal, se actualizar? despu?s
+    .FlushD(FlushD),
+    .FlushE(FlushE)
   );
 
   // Mux para forwarding en SrcA
