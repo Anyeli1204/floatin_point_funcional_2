@@ -3,113 +3,219 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="testbench_fp_verification_behav.wdb" id="1">
+      <db_ref path="testbench_matmul_behav.wdb" id="1">
          <top_modules>
             <top_module name="glbl" />
-            <top_module name="testbench_fp_verification" />
+            <top_module name="testbench_matmul" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="3.166 ns"></ZoomStartTime>
-      <ZoomEndTime time="122.967 ns"></ZoomEndTime>
-      <Cursor1Time time="103.000 ns"></Cursor1Time>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="55.501 ns"></ZoomEndTime>
+      <Cursor1Time time="152.300 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="223"></NameColumnWidth>
-      <ValueColumnWidth column_width="115"></ValueColumnWidth>
+      <NameColumnWidth column_width="201"></NameColumnWidth>
+      <ValueColumnWidth column_width="72"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="22" />
-   <wvobject fp_name="/testbench_fp_verification/clk" type="logic">
-      <obj_property name="ElementShortName">clk</obj_property>
-      <obj_property name="ObjectShortName">clk</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/reset" type="logic">
-      <obj_property name="ElementShortName">reset</obj_property>
-      <obj_property name="ObjectShortName">reset</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/WriteData" type="array">
-      <obj_property name="ElementShortName">WriteData[31:0]</obj_property>
-      <obj_property name="ObjectShortName">WriteData[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/DataAdr" type="array">
-      <obj_property name="ElementShortName">DataAdr[31:0]</obj_property>
-      <obj_property name="ObjectShortName">DataAdr[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/MemWrite" type="logic">
-      <obj_property name="ElementShortName">MemWrite</obj_property>
-      <obj_property name="ObjectShortName">MemWrite</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/FPMemWriteM" type="logic">
-      <obj_property name="ElementShortName">FPMemWriteM</obj_property>
-      <obj_property name="ObjectShortName">FPMemWriteM</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/FWriteDataM" type="array">
-      <obj_property name="ElementShortName">FWriteDataM[31:0]</obj_property>
-      <obj_property name="ObjectShortName">FWriteDataM[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/cycle_count" type="array">
-      <obj_property name="ElementShortName">cycle_count[31:0]</obj_property>
-      <obj_property name="ObjectShortName">cycle_count[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/expected_fsw_address" type="array">
-      <obj_property name="ElementShortName">expected_fsw_address[31:0]</obj_property>
-      <obj_property name="ObjectShortName">expected_fsw_address[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/expected_fsw_data" type="array">
-      <obj_property name="ElementShortName">expected_fsw_data[31:0]</obj_property>
-      <obj_property name="ObjectShortName">expected_fsw_data[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/fsw_detected" type="logic">
-      <obj_property name="ElementShortName">fsw_detected</obj_property>
-      <obj_property name="ObjectShortName">fsw_detected</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/fsw_verified" type="logic">
-      <obj_property name="ElementShortName">fsw_verified</obj_property>
-      <obj_property name="ObjectShortName">fsw_verified</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/dut/rvpipeline/dp/hu/ForwardAFE" type="array">
-      <obj_property name="ElementShortName">ForwardAFE[1:0]</obj_property>
-      <obj_property name="ObjectShortName">ForwardAFE[1:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/dut/rvpipeline/dp/hu/ForwardBFE" type="array">
-      <obj_property name="ElementShortName">ForwardBFE[1:0]</obj_property>
-      <obj_property name="ObjectShortName">ForwardBFE[1:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/dut/rvpipeline/dp/hu/StallF" type="logic">
-      <obj_property name="ElementShortName">StallF</obj_property>
-      <obj_property name="ObjectShortName">StallF</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/dut/rvpipeline/dp/hu/StallD" type="logic">
-      <obj_property name="ElementShortName">StallD</obj_property>
-      <obj_property name="ObjectShortName">StallD</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/dut/rvpipeline/dp/hu/FlushD" type="logic">
-      <obj_property name="ElementShortName">FlushD</obj_property>
-      <obj_property name="ObjectShortName">FlushD</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/dut/rvpipeline/dp/hu/FlushE" type="logic">
-      <obj_property name="ElementShortName">FlushE</obj_property>
-      <obj_property name="ObjectShortName">FlushE</obj_property>
-   </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/dut/Instr" type="array">
+   <WVObjectSize size="49" />
+   <wvobject fp_name="/testbench_matmul/dut/Instr" type="array">
       <obj_property name="ElementShortName">Instr[31:0]</obj_property>
       <obj_property name="ObjectShortName">Instr[31:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/dut/rvpipeline/dp/hu/ForwardAE" type="array">
-      <obj_property name="ElementShortName">ForwardAE[1:0]</obj_property>
-      <obj_property name="ObjectShortName">ForwardAE[1:0]</obj_property>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vrf/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vrf/a3" type="array">
+      <obj_property name="ElementShortName">a3[4:0]</obj_property>
+      <obj_property name="ObjectShortName">a3[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/InstrD" type="array">
+      <obj_property name="ElementShortName">InstrD[31:0]</obj_property>
+      <obj_property name="ObjectShortName">InstrD[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/c/ALUOp" type="array">
+      <obj_property name="ElementShortName">ALUOp[1:0]</obj_property>
+      <obj_property name="ObjectShortName">ALUOp[1:0]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/dut/rvpipeline/dp/hu/ForwardBE" type="array">
-      <obj_property name="ElementShortName">ForwardBE[1:0]</obj_property>
-      <obj_property name="ObjectShortName">ForwardBE[1:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/c/isMatmul" type="logic">
+      <obj_property name="ElementShortName">isMatmul</obj_property>
+      <obj_property name="ObjectShortName">isMatmul</obj_property>
    </wvobject>
-   <wvobject fp_name="/testbench_fp_verification/dut/rvpipeline/dp/InstrE" type="array">
-      <obj_property name="ElementShortName">InstrE[31:0]</obj_property>
-      <obj_property name="ObjectShortName">InstrE[31:0]</obj_property>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vrf/we3" type="logic">
+      <obj_property name="ElementShortName">we3</obj_property>
+      <obj_property name="ObjectShortName">we3</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vrf/a1" type="array">
+      <obj_property name="ElementShortName">a1[4:0]</obj_property>
+      <obj_property name="ObjectShortName">a1[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vrf/a2" type="array">
+      <obj_property name="ElementShortName">a2[4:0]</obj_property>
+      <obj_property name="ObjectShortName">a2[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vrf/a3_read" type="array">
+      <obj_property name="ElementShortName">a3_read[4:0]</obj_property>
+      <obj_property name="ObjectShortName">a3_read[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vrf/wd3" type="array">
+      <obj_property name="ElementShortName">wd3[31:0]</obj_property>
+      <obj_property name="ObjectShortName">wd3[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vrf/rd1" type="array">
+      <obj_property name="ElementShortName">rd1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">rd1[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vrf/rd2" type="array">
+      <obj_property name="ElementShortName">rd2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">rd2[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vrf/rd3" type="array">
+      <obj_property name="ElementShortName">rd3[31:0]</obj_property>
+      <obj_property name="ObjectShortName">rd3[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vrf/vrf" type="array">
+      <obj_property name="ElementShortName">vrf[31:0][31:0]</obj_property>
+      <obj_property name="ObjectShortName">vrf[31:0][31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vrf/i" type="array">
+      <obj_property name="ElementShortName">i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">i[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vs1_addr" type="array">
+      <obj_property name="ElementShortName">vs1_addr[4:0]</obj_property>
+      <obj_property name="ObjectShortName">vs1_addr[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vs2_addr" type="array">
+      <obj_property name="ElementShortName">vs2_addr[4:0]</obj_property>
+      <obj_property name="ObjectShortName">vs2_addr[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/vd_addr" type="array">
+      <obj_property name="ElementShortName">vd_addr[4:0]</obj_property>
+      <obj_property name="ObjectShortName">vd_addr[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/isFPD" type="logic">
+      <obj_property name="ElementShortName">isFPD</obj_property>
+      <obj_property name="ObjectShortName">isFPD</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/c/VRegWrite" type="logic">
+      <obj_property name="ElementShortName">VRegWrite</obj_property>
+      <obj_property name="ObjectShortName">VRegWrite</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/hu/StallD" type="logic">
+      <obj_property name="ElementShortName">StallD</obj_property>
+      <obj_property name="ObjectShortName">StallD</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/hu/StallF" type="logic">
+      <obj_property name="ElementShortName">StallF</obj_property>
+      <obj_property name="ObjectShortName">StallF</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/DP/alusito1/y" type="array">
+      <obj_property name="ElementShortName">y[31:0]</obj_property>
+      <obj_property name="ObjectShortName">y[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/addr_a" type="array">
+      <obj_property name="ElementShortName">addr_a[31:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_a[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/addr_b" type="array">
+      <obj_property name="ElementShortName">addr_b[31:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_b[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/addr_c" type="array">
+      <obj_property name="ElementShortName">addr_c[31:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_c[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/DP/curr_i" type="array">
+      <obj_property name="ElementShortName">curr_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">curr_i[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/DP/curr_j" type="array">
+      <obj_property name="ElementShortName">curr_j[31:0]</obj_property>
+      <obj_property name="ObjectShortName">curr_j[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/DP/curr_k" type="array">
+      <obj_property name="ElementShortName">curr_k[31:0]</obj_property>
+      <obj_property name="ObjectShortName">curr_k[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/matmul_active" type="logic">
+      <obj_property name="ElementShortName">matmul_active</obj_property>
+      <obj_property name="ObjectShortName">matmul_active</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/DP/num_i" type="array">
+      <obj_property name="ElementShortName">num_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">num_i[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/DP/num_j" type="array">
+      <obj_property name="ElementShortName">num_j[31:0]</obj_property>
+      <obj_property name="ObjectShortName">num_j[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/DP/num_k" type="array">
+      <obj_property name="ElementShortName">num_k[31:0]</obj_property>
+      <obj_property name="ObjectShortName">num_k[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/c/fp_d/isMatmulOp" type="logic">
+      <obj_property name="ElementShortName">isMatmulOp</obj_property>
+      <obj_property name="ObjectShortName">isMatmulOp</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/is_valid_matmul" type="logic">
+      <obj_property name="ElementShortName">is_valid_matmul</obj_property>
+      <obj_property name="ObjectShortName">is_valid_matmul</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/is_matmul_op" type="logic">
+      <obj_property name="ElementShortName">is_matmul_op</obj_property>
+      <obj_property name="ObjectShortName">is_matmul_op</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/was_matmul" type="logic">
+      <obj_property name="ElementShortName">was_matmul</obj_property>
+      <obj_property name="ObjectShortName">was_matmul</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/VRD2E" type="array">
+      <obj_property name="ElementShortName">VRD2E[31:0]</obj_property>
+      <obj_property name="ObjectShortName">VRD2E[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/c/fp_d/isMatmul" type="logic">
+      <obj_property name="ElementShortName">isMatmul</obj_property>
+      <obj_property name="ObjectShortName">isMatmul</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/c/isMatmul" type="logic">
+      <obj_property name="ElementShortName">isMatmul</obj_property>
+      <obj_property name="ObjectShortName">isMatmul</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/isMatmulE_calc" type="logic">
+      <obj_property name="ElementShortName">isMatmulE_calc</obj_property>
+      <obj_property name="ObjectShortName">isMatmulE_calc</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/DP/curr_i" type="array">
+      <obj_property name="ElementShortName">curr_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">curr_i[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/DP/curr_j" type="array">
+      <obj_property name="ElementShortName">curr_j[31:0]</obj_property>
+      <obj_property name="ObjectShortName">curr_j[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/DP/curr_k" type="array">
+      <obj_property name="ElementShortName">curr_k[31:0]</obj_property>
+      <obj_property name="ObjectShortName">curr_k[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/is_matmul_op" type="logic">
+      <obj_property name="ElementShortName">is_matmul_op</obj_property>
+      <obj_property name="ObjectShortName">is_matmul_op</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/matmul_unit/is_valid_matmul" type="logic">
+      <obj_property name="ElementShortName">is_valid_matmul</obj_property>
+      <obj_property name="ObjectShortName">is_valid_matmul</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/isMatmulM" type="logic">
+      <obj_property name="ElementShortName">isMatmulM</obj_property>
+      <obj_property name="ObjectShortName">isMatmulM</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench_matmul/dut/rvpipeline/dp/isMatmulW" type="logic">
+      <obj_property name="ElementShortName">isMatmulW</obj_property>
+      <obj_property name="ObjectShortName">isMatmulW</obj_property>
    </wvobject>
 </wave_config>

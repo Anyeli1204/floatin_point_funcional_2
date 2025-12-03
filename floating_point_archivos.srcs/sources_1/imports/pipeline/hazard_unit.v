@@ -101,8 +101,9 @@ module hazard_unit(
                    ((Rs1D == RdE) || (Rs2D == RdE)) &&  // dependencia RAW
                    (RdE != 5'b0);             // ignorar x0
   
-  assign StallF = lwStall;          // solo se stallea en load-use
-  assign StallD = lwStall;
+  // Asignar StallF y StallD por separado
+  assign StallF = lwStall;  // Stall solo en load-use
+  assign StallD = lwStall;  // Stall solo en load-use
   assign FlushD = PCSrcE;           // limpiar ID si hay salto tomado
   assign FlushE = lwStall | PCSrcE; // burbuja en EX por load-use o branch
 

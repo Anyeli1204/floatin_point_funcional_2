@@ -23,7 +23,7 @@ module riscvpipeline(input  clk, reset,
   wire [31:0] InstrD;
   wire PCSrcM_unused;  // Not used in pipeline version (PCSrc se calcula en EX)
   
-  // Señales FP desde controller
+  // Seales FP desde controller
   wire isFPD;
   wire [2:0] FALUControlD;
   wire FPRegWriteD;
@@ -45,7 +45,7 @@ module riscvpipeline(input  clk, reset,
     .Branch(BranchD),
     .ImmSrc(ImmSrcD),
     .ALUControl(ALUControlD),
-    // Señales FP
+    // Seales FP
     .isFP(isFPD),
     .FALUControl(FALUControlD),
     .FPRegWrite(FPRegWriteD),
@@ -64,7 +64,7 @@ module riscvpipeline(input  clk, reset,
     .BranchD(BranchD),
     .ImmSrcD(ImmSrcD),
     .ALUControlD(ALUControlD),
-    // Señales FP
+    // Seales FP
     .isFPD(isFPD),
     .FALUControlD(FALUControlD),
     .FPRegWriteD(FPRegWriteD),
@@ -83,4 +83,3 @@ module riscvpipeline(input  clk, reset,
   );
 
 endmodule
-

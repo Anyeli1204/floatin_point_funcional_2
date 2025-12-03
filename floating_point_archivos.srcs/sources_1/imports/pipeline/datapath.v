@@ -14,7 +14,7 @@ module datapath(
   input  isFPD,              // 1 si es instrucci�n FP
   input  [2:0] FALUControlD, // Control FALU (3 bits)
   input  FPRegWriteD,        // Escritura en register file FP
-  input  FPMemWriteD,         // Escritura en memoria FP
+  input  FPMemWriteD,        // Escritura en memoria FP
   //ReadData, se conecta a ReadDataM del datapath
   //ReadDataM, entra al registro MemWB como ReadDataM
 
@@ -43,9 +43,13 @@ module datapath(
   // Se�ales de control flotantes
   wire FPRegWriteE, FPRegWriteM, FPRegWriteW;  // Escritura en register file FP
   wire FPMemWriteE, FPMemWriteM;               // Escritura en memoria FP
+  // Seales de control vectoriales
+  wire isMatmulE_calc;                         // isMatmul calculado directamente en EX
+  wire isMatmulM, isMatmulW;                   // Propagacin de isMatmul (M y W)
+  wire VRegWriteE, VRegWriteM, VRegWriteW;     // Escritura en register file vectorial
   
-  // Escritura en banco entero solo si NO es instruccion FP
-  wire RegWriteIntW = RegWriteW & ~FPRegWriteW;
+  // Escritura en banco entero solo si NO es instruccion FP ni matmul
+  wire RegWriteIntW = RegWriteW & ~FPRegWriteW & ~VRegWriteW;
 
   // Se�ales internas de cada etapa del pipeline
   // Fetch
@@ -53,8 +57,15 @@ module datapath(
 
   // Decode
   wire [31:0] PCD, PCPlus4D; 
+  wire [31:0] InstrD;  // Instrucción en etapa Decode (conectada desde IF_ID)
   wire [31:0] RD1D, RD2D, ImmExtD;
   wire [31:0] FRD1D, FRD2D;  // Lecturas del FP register file
+  wire [31:0] VRD1D, VRD2D, VRD3D; // Lecturas del Vector register file
+  
+  // Señales intermedias para depuración (extraer campos de InstrD)
+  wire [4:0] vs1_addr = InstrD[19:15];  // Dirección vs1 para vregfile
+  wire [4:0] vs2_addr = InstrD[24:20];  // Dirección vs2 para vregfile
+  wire [4:0] vd_addr = InstrD[11:7];     // Dirección vd para vregfile
 
   // Execute
   wire [31:0] RD1E, RD2E, PCE, ImmExtE, PCPlus4E;
@@ -66,6 +77,7 @@ module datapath(
   wire isFPE;                // 1 si es instrucci�n FP
   wire [2:0] FALUControlE;   // Control FALU en EX
   wire [31:0] FRD1E, FRD2E;  // Datos FP en EX
+  wire [31:0] VRD1E, VRD2E, VRD3E;  // Datos vectoriales en EX
   wire [31:0] FALUResultE, FWriteDataE;
   wire [31:0] ALUResultE_muxed;  // Resultado ALU (entero o FP seg�n isFPE)
   wire [31:0] WriteDataE_muxed;  // Dato a escribir (entero o FP seg�n FPMemWriteE)
@@ -80,6 +92,8 @@ module datapath(
   wire [31:0] ALUResultW, ReadDataW, PCPlus4W;
   wire [31:0] ResultW, FALUResultW;  // Resultado ALU FP en WB
   wire [31:0] FResultW;  // Resultado final FP (FALU o memoria)
+  wire [31:0] VResultW;  // Resultado matmul (por ahora 0, se conectará después)
+  assign VResultW = 32'd0;  // Temporal: se conectará al resultado del matmul
   wire [4:0] RdW;
   wire [31:0] InstrW;  // Instrucción en WB para debugging
 
@@ -159,6 +173,20 @@ module datapath(
     .rd2(FRD2D)               // Salida fs2
   );
 
+  // Register File Vectorial Independiente (para matmul)
+  vregfile vrf(
+    .clk(clk),
+    .we3(VRegWriteW),         // Escritura desde WB
+    .a1(vs1_addr),            // vs1 (dirección base matriz A) - usar señal intermedia
+    .a2(vs2_addr),            // vs2 (dirección base matriz B) - usar señal intermedia
+    .a3(RdW),                 // vd (dirección base matriz C) - write address
+    .a3_read(vd_addr),        // vd (dirección base matriz C) - read address (rd en matmul) - usar señal intermedia
+    .wd3(VResultW),           // Dato a escribir (resultado matmul)
+    .rd1(VRD1D),              // Salida vs1
+    .rd2(VRD2D),              // Salida vs2
+    .rd3(VRD3D)               // Salida vd
+  );
+
 
 
   extend ext(
@@ -195,6 +223,9 @@ module datapath(
     .FALUControlD(FALUControlD),
     .FRD1D(FRD1D),
     .FRD2D(FRD2D),
+    .VRD1D(VRD1D),              // Datos del register file vectorial
+    .VRD2D(VRD2D),
+    .VRD3D(VRD3D),
 
     .RD1E(RD1E),
     .RD2E(RD2E),
@@ -218,7 +249,10 @@ module datapath(
     .FPMemWriteE(FPMemWriteE),
     .FALUControlE(FALUControlE),
     .FRD1E(FRD1E),
-    .FRD2E(FRD2E)
+    .FRD2E(FRD2E),
+    .VRD1E(VRD1E),
+    .VRD2E(VRD2E),
+    .VRD3E(VRD3E)
     
   );
 
@@ -320,6 +354,27 @@ module datapath(
   // Para fsw, usar FRD2E_forwarded como dato a escribir
   assign FWriteDataE = FRD2E_forwarded;
 
+  // Detectar matmul directamente en EX usando InstrE
+  // matmul: op=1010011, funct7=0100000, funct3=000
+  // No necesitamos propagar isMatmul desde el controlador
+  assign isMatmulE_calc = (InstrE[6:0] == 7'b1010011) &&    // op
+                          (InstrE[31:25] == 7'b0100000) &&  // funct7
+                          (InstrE[14:12] == 3'b000);        // funct3
+  
+  // Calcular VRegWriteE directamente en EX usando isMatmulE_calc
+  assign VRegWriteE = isMatmulE_calc && RegWriteE;
+
+  // Acelerador de Multiplicacin de Matrices (matmul)
+  // Conectado al RF vectorial independiente
+  matmul matmul_unit(
+    .clk(clk),
+    .reset(reset),
+    .addr_a(VRD1E),             // Direccin base matriz A desde RF vectorial (vs1)
+    .addr_b(VRD2E),             // Direccin base matriz B desde RF vectorial (vs2)
+    .addr_c(VRD3E),             // Direccin base matriz C desde RF vectorial (vd)
+    .is_matmul_op(isMatmulE_calc)    // Activar cuando es instruccin matmul (calculado directamente en EX)
+  );
+
   // Mux para seleccionar entre ALU entera y FP seg�n isFPE
   mux2 #(WIDTH) alu_result_mux(
     .d0(ALUResultE),      // Resultado ALU entera
@@ -352,7 +407,6 @@ module datapath(
 
   // EX/MEM 
   EX_MEM exmem(
-    // Inputs (se�ales de control y datos desde EX stage)
     .clk(clk),
     .reset(reset),
     .RegWriteE(RegWriteE),
@@ -361,6 +415,9 @@ module datapath(
     // Se�ales FP
     .FPRegWriteE(FPRegWriteE),
     .FPMemWriteE(FPMemWriteE),
+    // Seales vectoriales
+    .isMatmulE(isMatmulE_calc),  // Usar isMatmulE_calc calculado en EX
+    .VRegWriteE(VRegWriteE),
     .ALUResultE(ALUResultE_muxed),  // Resultado muxed (entero o FP)
     .WriteDataE(WriteDataE_muxed),   // Dato muxed (entero o FP)
     // Se�ales FP separadas
@@ -376,6 +433,9 @@ module datapath(
     // Salidas FP
     .FPRegWriteM(FPRegWriteM),
     .FPMemWriteM(FPMemWriteM),
+    // Salidas vectoriales
+    .isMatmulM(isMatmulM),
+    .VRegWriteM(VRegWriteM),
     .ALUResultM(ALUResultM),
     .WriteDataM(WriteDataM),
     // Salidas FP separadas
@@ -403,15 +463,21 @@ module datapath(
     // Se�ales FP
     .FPRegWriteM(FPRegWriteM),
     .FALUResultM(FALUResultM),
+    // Seales vectoriales
+    .isMatmulM(isMatmulM),
+    .VRegWriteM(VRegWriteM),
     .ALUResultW(ALUResultW),
     .ReadDataW(ReadDataW),
     .PCPlus4W(PCPlus4W),
     .RdW(RdW),
     .RegWriteW(RegWriteW),
     .ResultSrcW(ResultSrcW),
-    // Salidas FP
-    .FPRegWriteW(FPRegWriteW),
-    .FALUResultW(FALUResultW),
+                 // Salidas FP
+                 .FPRegWriteW(FPRegWriteW),
+                 .FALUResultW(FALUResultW),
+                 // Salidas vectoriales
+                 .isMatmulW(isMatmulW),
+                 .VRegWriteW(VRegWriteW),
     .InstrW(InstrW)  // Instrucción para debugging
   );
 

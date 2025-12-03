@@ -7,6 +7,9 @@ module MEM_WB(input clk, reset,
                  // Señales FP
                  input FPRegWriteM,
                  input [31:0] FALUResultM,  // Resultado ALU FP desde MEM
+                 // Señales vectoriales
+                 input isMatmulM,
+                 input VRegWriteM,
                  input [31:0] InstrM,  // Instrucción para debugging
                  output reg [31:0] ALUResultW, ReadDataW, PCPlus4W,
                  output reg [4:0] RdW,
@@ -15,6 +18,9 @@ module MEM_WB(input clk, reset,
                  // Salidas FP
                  output reg FPRegWriteW,
                  output reg [31:0] FALUResultW,  // Resultado ALU FP hacia WB
+                 // Salidas vectoriales
+                 output reg isMatmulW,
+                 output reg VRegWriteW,
                  output reg [31:0] InstrW  // Instrucción para debugging
 );
 
@@ -28,6 +34,8 @@ module MEM_WB(input clk, reset,
       ResultSrcW <= 0;
       FPRegWriteW <= 0;
       FALUResultW <= 0;
+      isMatmulW <= 0;
+      VRegWriteW <= 0;
       InstrW <= 32'h00000013;  // NOP para debugging
     end else begin
       ALUResultW <= ALUResultM;
@@ -38,6 +46,8 @@ module MEM_WB(input clk, reset,
       ResultSrcW <= ResultSrcM;
       FPRegWriteW <= FPRegWriteM;
       FALUResultW <= FALUResultM;
+      isMatmulW <= isMatmulM;
+      VRegWriteW <= VRegWriteM;
       InstrW <= InstrM;  // Propagación de instrucción
     end
   end

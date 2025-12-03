@@ -35,7 +35,10 @@ module vdatapath(
     input act_advance,
     
     //output reg advance
-    output advance
+    output advance,
+    
+    // Señal que indica cuando todas las iteraciones han terminado
+    output done
 );
 
     // Segun las shape [i, j] [j, k] así debería ser los fors 
@@ -84,6 +87,10 @@ module vdatapath(
     // Señal para indicar si estamos en una iteración válida usando curr_* (valores reales)
     // Escribimos solo si curr_i, curr_j, curr_k son válidos
     wire valid_iter = (curr_i < num_i) && (curr_j < num_j) && (curr_k < num_k);
+    
+    // Señal done: indica cuando todas las iteraciones han terminado
+    // Terminamos cuando curr_i >= num_i (hemos procesado todas las filas)
+    assign done = (curr_i >= num_i);
 
     wire[31:0] rd1, rd2;
     wire[31:0] sum;

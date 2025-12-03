@@ -1,6 +1,29 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/fp_flags_detectors.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module is_overflow
+INFO: [VRFC 10-311] analyzing module is_underflow
+INFO: [VRFC 10-311] analyzing module is_inexact
+INFO: [VRFC 10-311] analyzing module is_invalid_op
+INFO: [VRFC 10-311] analyzing module is_invalid_val
+INFO: [VRFC 10-311] analyzing module is_inf_detector
+INFO: [VRFC 10-311] analyzing module both_are_inf
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/fp16_special_case_handler.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fp16_classifier
+INFO: [VRFC 10-311] analyzing module fp16_special_values
+INFO: [VRFC 10-311] analyzing module fp16_special_case_handler
+INFO: [VRFC 10-311] analyzing module fp16_flags
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/riscvpipeline.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module riscvpipeline
 INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/DivHP.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module Division
 INFO: [VRFC 10-311] analyzing module DivHP
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/EX_MEM.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module EX_MEM
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/ID_EX.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ID_EX
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/IF_ID.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module IF_ID
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/MEM_WB.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module MEM_WB
 INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/ProductHP.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module Prod
 INFO: [VRFC 10-311] analyzing module ProductHP
@@ -20,36 +43,85 @@ INFO: [VRFC 10-311] analyzing module SumMantisa
 WARNING: [VRFC 10-8332] begin/end is required for generate-for in this mode of Verilog [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/Suma16Bits.v:163]
 INFO: [VRFC 10-311] analyzing module RestaMantisa
 INFO: [VRFC 10-311] analyzing module Suma16Bits
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/adder.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module adder
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/alu.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module alu
 INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/alu_fp_full.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module alu_fp
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/fp16_special_case_handler.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module fp16_classifier
-INFO: [VRFC 10-311] analyzing module fp16_special_values
-INFO: [VRFC 10-311] analyzing module fp16_special_case_handler
-INFO: [VRFC 10-311] analyzing module fp16_flags
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/fp_flags_detectors.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module is_overflow
-INFO: [VRFC 10-311] analyzing module is_underflow
-INFO: [VRFC 10-311] analyzing module is_inexact
-INFO: [VRFC 10-311] analyzing module is_invalid_op
-INFO: [VRFC 10-311] analyzing module is_invalid_val
-INFO: [VRFC 10-311] analyzing module is_inf_detector
-INFO: [VRFC 10-311] analyzing module both_are_inf
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/matmul.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module matmul
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/aludec.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module aludec
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/controller_fp.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module controller_fp
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/datapath.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module datapath
+WARNING: [VRFC 10-9336] redeclaration of ANSI port 'ZeroE' is not allowed [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/datapath.v:41]
+WARNING: [VRFC 10-9336] redeclaration of ANSI port 'FPMemWriteM' is not allowed [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/datapath.v:45]
+WARNING: [VRFC 10-9336] redeclaration of ANSI port 'InstrD' is not allowed [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/datapath.v:60]
+WARNING: [VRFC 10-9336] redeclaration of ANSI port 'ALUResultM' is not allowed [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/datapath.v:86]
+WARNING: [VRFC 10-9336] redeclaration of ANSI port 'FWriteDataM' is not allowed [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/datapath.v:87]
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/dmem.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module dmem
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/extend.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module extend
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/flopr.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module flopr
+WARNING: [VRFC 10-9336] redeclaration of ANSI port 'q' is not allowed [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/flopr.v:8]
+WARNING: [VRFC 10-3380] identifier 'WIDTH' is used before its declaration [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/flopr.v:2]
+WARNING: [VRFC 10-3380] identifier 'WIDTH' is used before its declaration [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/flopr.v:4]
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/fpdec.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fpdec
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/fregfile.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fregfile
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/hazard_unit.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hazard_unit
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/imem.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module imem
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/maindec.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module maindec
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/mux2.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module mux2
+WARNING: [VRFC 10-3380] identifier 'WIDTH' is used before its declaration [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/mux2.v:1]
+WARNING: [VRFC 10-3380] identifier 'WIDTH' is used before its declaration [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/mux2.v:3]
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/mux3.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module mux3
+WARNING: [VRFC 10-3380] identifier 'WIDTH' is used before its declaration [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/mux3.v:1]
+WARNING: [VRFC 10-3380] identifier 'WIDTH' is used before its declaration [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/mux3.v:3]
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/mux_df.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module mux_df
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/regfile.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module regfile
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/riscvsingle.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module riscvpipeline
+WARNING: [VRFC 10-3609] overwriting previous definition of module 'riscvpipeline' [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/riscvsingle.v:2]
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/testbench.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module testbench
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/top.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module top
 INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/matmultop.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module matmultop
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/nextaddr.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module nextaddr
 INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/vdatapath.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module vdatapath
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/nextaddr.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module nextaddr
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/matmul.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module matmul
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/vmux4.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vmux4
 INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/vmem.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module vmem
 INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/vmux2.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module vmux2
 INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/vmux3.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module vmux3
-INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/vmux4.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module vmux4
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sources_1/imports/pipeline/vregfile.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vregfile
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sim_1/imports/pipeline/testbench_fp_verification.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module testbench_fp_verification
 INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sim_1/imports/pipeline/tb_matmul.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module tb_matmul
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sim_1/imports/pipeline/testbench.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module testbench
+WARNING: [VRFC 10-3609] overwriting previous definition of module 'testbench' [C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sim_1/imports/pipeline/testbench.v:1]
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/anyel/trabajo_corregido/floating_point_archivos.srcs/sim_1/imports/pipeline/testbench_matmul.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module testbench_matmul

@@ -2,3 +2,6 @@ Running: xsim.dir/tb_matmul_behav/xsimk.exe -simmode gui -wdb tb_matmul_behav.wd
 Design successfully loaded
 Design Loading Memory Usage: 10912 KB (Peak: 10912 KB)
 Design Loading CPU Usage: 15 ms
+Simulation completed
+Simulation Memory Usage: 14716 KB (Peak: 14716 KB)
+Simulation CPU Usage: 296 ms

@@ -11,7 +11,8 @@ module imem(input  [31:0] a,
       
       // Cargar programa desde archivo
       // Cambiar "riscvtest.txt" por "riscvtest_fp.txt" para probar instrucciones FP
-      $readmemh("riscvtest_fp.txt", RAM); 
+      // Cambiar por "test_matmul.txt" para probar instrucción matmul
+      $readmemh("test_matmul.txt", RAM); 
   end
 
   assign rd = RAM[a[31:2]]; // word aligned

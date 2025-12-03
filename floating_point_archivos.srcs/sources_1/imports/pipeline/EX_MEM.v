@@ -8,6 +8,9 @@ module EX_MEM(
     // Señales FP
     input FPRegWriteE,
     input FPMemWriteE,
+    // Señales vectoriales
+    input isMatmulE,
+    input VRegWriteE,
     
     input [31:0] ALUResultE,
     input [31:0] WriteDataE,
@@ -24,6 +27,9 @@ module EX_MEM(
     // Salidas FP
     output reg FPRegWriteM,
     output reg FPMemWriteM,
+    // Salidas vectoriales
+    output reg isMatmulM,
+    output reg VRegWriteM,
     
     output reg [31:0] ALUResultM,
     output reg [31:0] WriteDataM,
@@ -42,6 +48,8 @@ always @(posedge clk or posedge reset) begin
         ResultSrcM  <= 2'b00;
         FPRegWriteM <= 0;
         FPMemWriteM <= 0;
+        isMatmulM <= 0;
+        VRegWriteM <= 0;
         ALUResultM  <= 32'b0;
         WriteDataM  <= 32'b0;
         FALUResultM <= 32'b0;
@@ -55,6 +63,8 @@ always @(posedge clk or posedge reset) begin
         ResultSrcM  <= ResultSrcE;
         FPRegWriteM <= FPRegWriteE;
         FPMemWriteM <= FPMemWriteE;
+        isMatmulM <= isMatmulE;
+        VRegWriteM <= VRegWriteE;
         ALUResultM  <= ALUResultE;
         WriteDataM  <= WriteDataE;
         FALUResultM <= FALUResultE;

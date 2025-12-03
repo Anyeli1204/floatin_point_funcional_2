@@ -15,10 +15,12 @@ module controller_fp(
   output [2:0] ALUControl,
   // Señales FP
   output       isFP, //
+  output       isMatmul,     // 1 si es instrucción matmul
   output [3:0] FPLatency,
-  output [2:0] FALUControl,  // Control para FALU (3 bits): 000=fadd, 001=fsub, 010=fmul, 011=fdiv
+  output [2:0] FALUControl,  // Control para FALU (3 bits): 000=fadd, 001=fsub, 010=fmul, 011=fdiv, 100=matmul
   output       FPRegWrite,   // Escritura en register file FP (isFP && RegWrite)
-  output       FPMemWrite    // Escritura en memoria FP (isFP && MemWrite)
+  output       FPMemWrite,   // Escritura en memoria FP (isFP && MemWrite)
+  output       VRegWrite     // Escritura en register file vectorial (isMatmul && RegWrite)
 );
   
   wire [1:0] ALUOp; 
@@ -52,7 +54,8 @@ module controller_fp(
     .funct7(funct7),
     .ALUOp(ALUOp),              // ALUOp para distinguir aritméticas (11) de load/store (00)
     .isFP(isFP),
-    .FALUControl(FALUControl)  // Control FALU (3 bits): 000=fadd, 001=fsub, 010=fmul, 011=fdiv
+    .isMatmul(isMatmul),        // Señal para matmul
+    .FALUControl(FALUControl)  // Control FALU (3 bits): 000=fadd, 001=fsub, 010=fmul, 011=fdiv, 100=matmul
   );
   
   // Calcular latencia según operación FP (usando FALUControl directamente)
@@ -68,10 +71,12 @@ module controller_fp(
   // Señales de control FP derivadas
   // FPRegWrite: para operaciones aritméticas FP (isFP) Y para flw (load FP)
   // FPMemWrite: para fsw (store FP)
+  // VRegWrite: para matmul (escritura en RF vectorial)
   wire isFLW = (op == 7'b0000111);  // flw (load word FP)
   wire isFSW = (op == 7'b0100111);  // fsw (store word FP)
   assign FPRegWrite = (isFP && RegWrite) || (isFLW && RegWrite);  // Aritméticas FP o flw
   assign FPMemWrite = isFSW && MemWrite;   // Solo fsw
+  assign VRegWrite = isMatmul && RegWrite; // Solo matmul escribe en RF vectorial
   
   assign PCSrc = Branch & Zero | Jump; 
 endmodule

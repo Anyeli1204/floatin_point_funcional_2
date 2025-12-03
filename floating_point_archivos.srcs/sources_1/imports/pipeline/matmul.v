@@ -7,11 +7,11 @@ module matmul(
     wire [31:0] rd_A_rows, rd_B_rows;
     wire [31:0] rd_A_cols, rd_B_cols;
 
-    // Señal interna para lógica combinacional
+    // Se�al interna para l�gica combinacional
     wire advance;  // wire conectado al datapath
     wire act_advance = advance;
 
-    // Primer módulo solo para filas
+    // Primer m�dulo solo para filas
     vmem MEM_rows (
         .clk(clk),
         .we(1'b0),
@@ -23,7 +23,7 @@ module matmul(
         .rv_b(rd_B_rows)
     );
 
-    // Segundo módulo para columnas
+    // Segundo m�dulo para columnas
     vmem MEM_cols (
         .clk(clk),
         .we(1'b0),
@@ -39,6 +39,7 @@ module matmul(
     reg [31:0] i, j, k;
     reg first_iter;
     reg was_matmul;
+    reg matmul_active;   // 1 mientras estamos ejecutando el matmul
 
     wire [31:0] next_i, next_j, next_k;
     wire adv_i, adv_j;
@@ -56,6 +57,9 @@ module matmul(
     wire [31:0] B_cols = rd_B_cols;
 
     wire is_valid_matmul = (A_cols == B_rows);
+
+    // Señal done desde vdatapath
+    wire done;
 
     // Instancia datapath
     vdatapath DP (
@@ -80,10 +84,11 @@ module matmul(
         .next_k(next_k),
         .not_first_iter(not_first_iter),
         .act_advance(act_advance),
-        .advance(advance)  // conectar el wire
+        .advance(advance),  // conectar el wire
+        .done(done)
     );
 
-    // --- Lógica combinacional de control ---
+    // --- L�gica combinacional de control ---
     always @(*) begin
         if (reset) begin
             i = 0;
@@ -93,8 +98,8 @@ module matmul(
             was_matmul = 0;
             //advance = 0;
         end
-        // Inicio de matmul
-        else if (is_matmul_op && !was_matmul && is_valid_matmul) begin
+        // Inicio de matmul: cuando is_matmul_op se activa y matmul_active aún no está activo
+        else if (is_matmul_op && !matmul_active && is_valid_matmul) begin
             i = 0;
             j = 0;
             k = 0;
@@ -102,8 +107,10 @@ module matmul(
             was_matmul = 1;
             //advance_internal = 1;
         end
-        // Matmul en progreso
-        else if (is_matmul_op && is_valid_matmul) begin
+        // Matmul en progreso: usar matmul_active (ya no verificamos is_valid_matmul aquí)
+        // matmul_active se mantiene activo durante todo el proceso, incluso cuando la instrucción sale de EX
+        // Una vez que matmul_active está activo, no necesitamos verificar is_valid_matmul de nuevo
+        else if (matmul_active) begin
             if (advance) begin
                 i = next_i;
                 j = next_j;
@@ -122,6 +129,22 @@ module matmul(
         else begin
             was_matmul = 0;
             //advance = 0;
+        end
+    end
+    
+    // --- Lógica secuencial para matmul_active (versión "bonita") ---
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            matmul_active <= 1'b0;
+        end else begin
+            // Inicia matmul cuando la instrucción entra a EX
+            if (is_matmul_op && !matmul_active) begin
+                matmul_active <= 1'b1;
+            end
+            // Lo apagas cuando vdatapath dice que terminó
+            else if (done) begin
+                matmul_active <= 1'b0;
+            end
         end
     end
 

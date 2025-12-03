@@ -4,16 +4,30 @@ module fpdec(
   input  [6:0] funct7,
   input  [1:0] ALUOp,             // Señal ALUOp para distinguir aritméticas de load/store
   output       isFP,              // 1 si es instrucción FP
-  output [2:0] FALUControl         // Control para FALU: 000=fadd, 001=fsub, 010=fmul, 011=fdiv
+  output       isMatmul,          // 1 si es instrucción matmul
+  output [2:0] FALUControl         // Control para FALU: 000=fadd, 001=fsub, 010=fmul, 011=fdiv, 100=matmul
 );
 
   // SOLO detectar operaciones aritméticas FP (ALUOp = 11)
   // flw/fsw (ALUOp = 00) NO se detectan aquí, se manejan en maindec y usan ALU normal
-  wire isFPArithOp = (op == 7'b1010011) && (ALUOp == 2'b11);
+  // Asegurar que las comparaciones siempre tengan valores definidos
+  wire op_match = (op == 7'b1010011);
+  wire funct7_match = (funct7 == 7'b0100000);
+  wire funct3_match = (funct3 == 3'b000);
+  wire aluop_match = (ALUOp == 2'b11);
+  
+  wire isFPArithOp = op_match && aluop_match;
+  
+  // Detectar matmul: op=1010011, funct7=0100000, funct3=000, ALUOp=11
+  // Asegurar que siempre tenga un valor definido (0 o 1, nunca X o Z)
+  wire isMatmulOp = op_match && funct7_match && funct3_match && aluop_match;
   
   // isFP = 1 solo para operaciones aritméticas FP (fadd, fsub, fmul, fdiv)
+  // matmul NO es FP aritmética, es una operación especial
   // flw/fsw NO generan isFP = 1, usan ALU entera normalmente
-  assign isFP = isFPArithOp;
+  assign isFP = isFPArithOp && !isMatmulOp;  // FP pero no matmul
+  // Asegurar que isMatmul siempre tenga un valor definido (0 o 1, nunca X o Z)
+  assign isMatmul = isMatmulOp ? 1'b1 : 1'b0;
   
   // Decodificar FALUControl según funct7 completo
   // SOLO para operaciones aritméticas FP (ALUOp = 11)
@@ -25,8 +39,11 @@ module fpdec(
   assign FALUControl = FALUControl_reg;
   
   always @(*) begin
-    // Solo generar FALUControl válido si es operación aritmética FP (ALUOp = 11)
-    if (isFPArithOp) begin  // Operación aritmética FP
+    // Prioridad: matmul primero, luego FP aritmética
+    if (isMatmulOp) begin
+      // matmul: FALUControl = 100
+      FALUControl_reg = 3'b100;
+    end else if (isFPArithOp) begin  // Operación aritmética FP
       case (funct7)
         7'b0000000: FALUControl_reg = 3'b000; // fadd.s (funct7 = 0x00)
         7'b0000100: FALUControl_reg = 3'b001; // fsub.s (funct7 = 0x04)

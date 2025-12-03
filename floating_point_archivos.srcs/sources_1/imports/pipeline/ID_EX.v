@@ -15,6 +15,7 @@ module ID_EX(input clk, reset,
                 input [2:0] FALUControlD,        // Control FALU (3 bits)
                 input [3:0] FPLatencyD,         // Latencia FP (4 bits)
                 input [31:0] FRD1D, FRD2D, 
+                input [31:0] VRD1D, VRD2D, VRD3D,     // Datos del register file vectorial
                      // Datos del register file FP
                 output reg [31:0] RD1E, RD2E, PCE,
                 output reg [4:0] Rs1E, Rs2E, RdE,
@@ -29,18 +30,22 @@ module ID_EX(input clk, reset,
                 output reg FPMemWriteE,          // Escritura en memoria FP
                 output reg [2:0] FALUControlE,   // Control FALU en EX
                 output reg [3:0] FPLatencyE,     // Latencia FP en EX
-                output reg [31:0] FRD1E, FRD2E   // Datos FP en EX
+                output reg [31:0] FRD1E, FRD2E,  // Datos FP en EX
+                output reg [31:0] VRD1E, VRD2E, VRD3E  // Datos vectoriales en EX
 );
 
   // Inicializar registros
   initial begin
     FPLatencyE = 4'b0;
-    isFPE = 1'b0;
-    FPRegWriteE = 1'b0;
-    FPMemWriteE = 1'b0;
-    FALUControlE = 3'b0;
-    FRD1E = 32'b0;
-    FRD2E = 32'b0;
+      isFPE = 1'b0;
+      FPRegWriteE = 1'b0;
+      FPMemWriteE = 1'b0;
+      FALUControlE = 3'b0;
+      FRD1E = 32'b0;
+      FRD2E = 32'b0;
+      VRD1E = 32'b0;
+      VRD2E = 32'b0;
+      VRD3E = 32'b0;
   end
 
   always @(posedge clk or posedge reset) begin
@@ -69,6 +74,9 @@ module ID_EX(input clk, reset,
       FPLatencyE <= 0;
       FRD1E <= 0;
       FRD2E <= 0;
+      VRD1E <= 0;
+      VRD2E <= 0;
+      VRD3E <= 0;
     end else if (FlushE) begin  // Flush = insertar NOP
       RD1E <= 0;
       RD2E <= 0;
@@ -101,6 +109,9 @@ module ID_EX(input clk, reset,
       end
       FRD1E <= 0;
       FRD2E <= 0;
+      VRD1E <= 0;  // IMPORTANTE: Limpiar datos vectoriales durante flush
+      VRD2E <= 0;
+      VRD3E <= 0;
     end else begin
       RD1E <= RD1D;
       RD2E <= RD2D;
@@ -126,6 +137,9 @@ module ID_EX(input clk, reset,
       FPLatencyE <= FPLatencyD;
       FRD1E <= FRD1D;
       FRD2E <= FRD2D;
+      VRD1E <= VRD1D;
+      VRD2E <= VRD2D;
+      VRD3E <= VRD3D;
     end
   end
 endmodule
